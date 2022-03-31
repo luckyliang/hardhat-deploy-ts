@@ -26,12 +26,16 @@ const accounts = fs.readFileSync(".secret").toString().trim().split(",");
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
+// const defaultNetwork = "bsctest";
 const defaultNetwork = "bsctest";
 
 const config: HardhatUserConfig = {
   solidity: "0.8.4",
   defaultNetwork: defaultNetwork,
-  networks: {
+  networks: { 
+    localhost:{
+      url: "http://127.0.0.1:8545/" 
+    },
     bsctest: {
       url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
       chainId: 97,
@@ -54,9 +58,9 @@ const config: HardhatUserConfig = {
       //指定网络
       bsctest: 0
     },
-    testUser1: {
+    user1: {
       default: 1
-    }
+    },
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,

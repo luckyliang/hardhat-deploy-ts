@@ -8,9 +8,9 @@ import { Greeter } from "../typechain";
 const deployGreeting: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const deployments = hre.deployments;
     //必须在hardhat.config.ts 中 配置 namedAccounts
-    const { deployer, testUser1 } = await hre.getNamedAccounts();
+    const { deployer, user1 } = await hre.getNamedAccounts();
 
-    console.log("deployer = " + deployer + " testUser1 = " + testUser1);
+    console.log("deployer = " + deployer + " testUser1 = " + user1);
 
     console.log(`deployer = ${deployer} network = ${network.name} chainId = ${network.config.chainId}`);
 
