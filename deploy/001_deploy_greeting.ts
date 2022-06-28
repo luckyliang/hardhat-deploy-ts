@@ -1,9 +1,9 @@
-import { network, ethers } from "hardhat";
+import { network, ethers, getNamedAccounts } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 //使用hardhat-deploy
-//使用命令：npx hardhat deploy --tags Greeting
+// 使用命令：npx hardhat deploy --tags Greeting
 const deployGreeting: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const deployments = hre.deployments;
     //必须在hardhat.config.ts 中 配置 namedAccounts
@@ -21,29 +21,20 @@ const deployGreeting: DeployFunction = async function (hre: HardhatRuntimeEnviro
         log: true
     });
 
-    console.log(`greeter address = ${greeterResult.address} gas used = ${greeterResult.receipt?.gasUsed}`);
-
-    //    //部署账号设置greting
-    //    const greeterContract: Greeter  = await ethers.getContract<Greeter>("Greeter", deployer);
-    //    const result = await greeterContract.setGreeting("deployer set greeter");
-    //    await result.wait();
-
-    //    const greetValue = await greeterContract.greet();
-    //    console.log("greetValue = ", greetValue);
-    //    const getGreeting = await greeterContract.getUserSetGreeting(deployer);
-    //    console.log("getGreeting = ", getGreeting);
-
-    //    //使用测试账号测试合约,connect连接到其他账户， attach(): Re-attach to a different on-chain instance of this contract
-    //    greeterContract.connect(testUser1);
-    //    const retuslt2 = await greeterContract.setGreeting("use1 set greeting");
-    //    await retuslt2.wait();
-
-    //    const newValue = await greeterContract.greet();
-    //    console.log("newValue = ", newValue);
-    //    const newgetGreeting = await greeterContract.getUserSetGreeting(deployer);
-    //    console.log("newgetGreeting = ", newgetGreeting);
 }
 
 deployGreeting.tags = ["Greeting"];
+
+//hardhat 原生部署方法，不会储存，每次调用该方法都会创建一个新合约
+// async function commonDeploy() {
+//     const { deployer, user1 } = await getNamedAccounts();
+    
+//     const Greeter = await ethers.getContractFactory("Greeter", deployer)
+//     const greeter = await Greeter.deploy("hello gretter");
+//     await greeter.deployed();
+//     console.log("greeter deployed to: ", greeter.address);
+// }
+
+// commonDeploy.tags = ["Greeting"];
 
 export default deployGreeting;
