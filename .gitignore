@@ -7,3 +7,7 @@ typechain
 #Hardhat files
 cache
 artifacts
+*.env
+.vscode
+soljson-v0.8.10+commit.fc410830.js
+soljson-v0.8.7+commit.e28d00a7.js

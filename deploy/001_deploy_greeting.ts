@@ -1,7 +1,6 @@
 import { network, ethers } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { Greeter } from "../typechain";
 
 //使用hardhat-deploy
 //使用命令：npx hardhat deploy --tags Greeting
