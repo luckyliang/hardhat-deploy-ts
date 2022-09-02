@@ -1,10 +1,20 @@
 {
   "name": "hardhat-project",
+  "version": "1.0.0",
+  "description": "hardhat deploy",
+  "scripts": {
+    "complie": "yarn hardhat run compile",
+    "node": "yarn hardhat node --network hardhat",
+    "node-no-deploy": "yarn hardhat node --network hardhat --no-deploy",
+    "test": "yarn hardhat test",
+    "deploy": "yarn hardhat deploy",
+    "verify": "yarn workspace @scaffold-eth/hardhat verify"
+  },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
     "@nomiclabs/hardhat-etherscan": "^3.0.3",
     "@nomiclabs/hardhat-waffle": "^2.0.3",
-    "@openzeppelin/contracts": "^4.5.0",
+    "@openzeppelin/contracts": "^4.7.3",
     "@typechain/ethers-v5": "^7.2.0",
     "@typechain/hardhat": "^2.3.1",
     "@types/chai": "^4.3.0",

@@ -22,32 +22,53 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   }
 });
 
-const accounts = fs.readFileSync(".secret").toString().trim().split(",");
+// const accounts = fs.readFileSync(".secret").toString().trim().split(",");
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
-// const defaultNetwork = "bsctest";
-const defaultNetwork = "bsctest";
+const defaultNetwork = "localhost";
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.4",
+  solidity: {
+    version: "0.8.0",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200
+      }
+    }
+  },
   defaultNetwork: defaultNetwork,
   networks: { 
     localhost:{
-      url: "http://127.0.0.1:8545/" 
+      url: "http://127.0.0.1:8545/",
     },
-    bsctest: {
+    bscTestnet: {
       url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
       chainId: 97,
-      accounts: accounts,
+      accounts: {
+        mnemonic: process.env.mnemonic
+      }
       //live: false, //指定是否是一个线上的链，localhost and hardhat where the default is false
       //tags: ["bsctest"] //设置网络别名，可通过hre.network.tags获得
     },
+    bsc: {
+      allowUnlimitedContractSize: true,
+      url: "https://bsc-dataseed1.binance.org/",
+      chainId: 56,
+      accounts: {
+        mnemonic: process.env.mnemonic
+      }
+    },
+    Rinkeby: {
+      url: `https://rinkeby.infura.io/v3/${process.env.infuraKey}`
+    },
     ropsten: {
-      url: process.env.ROPSTEN_URL || "",
+      url: `https://ropsten.infura.io/v3//${process.env.infuraKey}`,
       live: true,
-      accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      accounts:{
+        mnemonic: process.env.mnemonic,
+      }
     },
   },
   namedAccounts: {
@@ -63,11 +84,16 @@ const config: HardhatUserConfig = {
     },
   },
   gasReporter: {
-    enabled: process.env.REPORT_GAS !== undefined,
+    enabled: true,
     currency: "USD",
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey: {
+      bsc: process.env.bscApiKey,
+      rinkeby: process.env.infuraKey,
+      mainnet: process.env.infuraKey,
+      ropsten: process.env.infuraKey
+    }
   },
 };
 
