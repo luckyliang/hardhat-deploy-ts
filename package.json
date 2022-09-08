@@ -3,12 +3,7 @@
   "version": "1.0.0",
   "description": "hardhat deploy",
   "scripts": {
-    "complie": "yarn hardhat run compile",
-    "node": "yarn hardhat node --network hardhat",
-    "node-no-deploy": "yarn hardhat node --network hardhat --no-deploy",
-    "test": "yarn hardhat test",
-    "deploy": "yarn hardhat deploy",
-    "verify": "yarn workspace @scaffold-eth/hardhat verify"
+    "compile":"hardhat compile"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",

@@ -11,6 +11,7 @@
         "**/node_modules":true
     },
     "solidity.defaultCompiler": "localFile", //默认使用本地编译
+    "solidity.compileUsingLocalVersion":"/Users/a123/work/compile/soljson-v0.8.7+commit.e28d00a7.js",
     "solidity.remappingsUnix": [//unix 类型配置
         "solidity.compileUsingLocalVersion=/Users/a123/work/compile/soljson-v0.8.7+commit.e28d00a7.js",
         "@openzeppelin/=/usr/local/lib/node_modules/@openzeppelin"
