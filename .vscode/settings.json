@@ -16,12 +16,12 @@
         "solidity.compileUsingLocalVersion=/Users/a123/work/compile/soljson-v0.8.7+commit.e28d00a7.js",
         "@openzeppelin/=/usr/local/lib/node_modules/@openzeppelin"
     ],      
-    // "solidity.remappingsWindows": [     //windows 配置
-    //     //compileUsingLocalVersion设置本地编译文件，最好设置在项目目录下，测试在其他盘里会报错
-    //     "solidity.compileUsingLocalVersion=D:\\Program Files\\solidity\\soljson-v0.8.7+commit.e28d00a7.js",
-    //     //配置openzeppelin库位置
-    //     "@openzeppelin/=D:\\Program Files\\nvm\\v14.19.1\\node_modules\\@openzeppelin" 
-    // ],
+    "solidity.remappingsWindows": [     //windows 配置
+        //compileUsingLocalVersion设置本地编译文件，最好设置在项目目录下，测试在其他盘里会报错
+        "solidity.compileUsingLocalVersion=D:\\Program Files\\solidity\\soljson-v0.8.7+commit.e28d00a7.js",
+        //配置openzeppelin库位置
+        "@openzeppelin/=D:\\Program Files\\nvm\\v14.19.1\\node_modules\\@openzeppelin" 
+    ],
     // "solidity.remappings": [ //同意配置建议使用上面的根据平台配置
     //     "@openzeppelin/=D:\\Program Files\\nvm\\v14.19.1\\node_modules\\@openzeppelin"
     // ],
