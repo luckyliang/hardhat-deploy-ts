@@ -7,13 +7,27 @@ import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-etherscan";
 import "hardhat-deploy";
 import "solidity-coverage";
+import fs from  "fs";
+import { utils } from "ethers";
+import { HardhatEthersHelpers } from "@nomiclabs/hardhat-ethers/types";
 
-import { readJSONFile } from "./utils/utils";
+const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 
-dotenv.config({path: `${__dirname}/accounts/.env`}); //load env
+dotenv.config({path: `${__dirname}/.env`}); //load env
 
 const defaultNetwork = "localhost";
-const privateKeys = readJSONFile<string[]>(`${__dirname}/accounts/secret.json`)
+
+function mnemonic() {
+  try {
+    return fs.readFileSync("./mnemonic.txt").toString().trim();
+  } catch (error) {
+    if (defaultNetwork !== "localhost") {
+      console.log(
+        "☢️ WARNING: No mnemonic file created for a deploy account. Try `yarn run generate` and then `yarn run account`."
+      );
+    }
+  }
+}
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -38,36 +52,45 @@ const config: HardhatUserConfig = {
       }
     ]
   },
-  defaultNetwork: defaultNetwork,
+  defaultNetwork,
   networks: { 
     localhost:{
       url: "http://127.0.0.1:8545/",
+    },
+    mainnet: {
+      url: `https://mainnet.infura.io/v3/${process.env.infuraKey}`,
+      accounts: {
+        mnemonic: mnemonic(),
+      },
     },
     bsc: {
       allowUnlimitedContractSize: true,
       url: "https://bsc-dataseed1.binance.org/",
       chainId: 56,
       accounts: {
-        mnemonic: process.env.mnemonic
+        mnemonic: mnemonic()
       }
     },
     bscTestnet: {
       url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
       chainId: 97,
       accounts: {
-        mnemonic: process.env.mnemonic
+        mnemonic: mnemonic()
       }
       //live: false, //指定是否是一个线上的链，localhost and hardhat where the default is false
       //tags: ["bsctest"] //设置网络别名，可通过hre.network.tags获得
     },
     rinkeby: {
-      url: `https://rinkeby.infura.io/v3/${process.env.infuraKey}`
+      url: `https://rinkeby.infura.io/v3/${process.env.infuraKey}`,
+      accounts: {
+        mnemonic: mnemonic()
+      }
     },
     ropsten: {
       url: `https://ropsten.infura.io/v3//${process.env.infuraKey}`,
       live: true,
       accounts:{
-        mnemonic: process.env.mnemonic,
+        mnemonic: mnemonic()
       }
     },
   },
@@ -104,5 +127,35 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
     console.log(account.address);
   }
 });
+
+
+task("blockNumber", "Prints the block number", async (_, { ethers }) => {
+  const blockNumber = await ethers.provider.getBlockNumber();
+  console.log(blockNumber);
+});
+
+async function addr(ethers: HardhatEthersHelpers, addr: string) {
+  if (isAddress(addr)) {
+    return getAddress(addr);
+  }
+  const accounts = await ethers.provider.listAccounts();
+  if (accounts.includes(addr)) {
+    return accounts[accounts.indexOf(addr)];
+  }
+  throw `Could not normalize address: ${addr}`;
+}
+
+task("balance", "Prints an account's balance")
+  .addPositionalParam("account", "The account's address")
+  .setAction(async (taskArgs, { ethers }) => {
+    const balance = await ethers.provider.getBalance(
+      await addr(ethers, taskArgs.account)
+    );
+    console.log(formatUnits(balance, "ether"), "ETH");
+  });
+
+  
+
+  
 
 export default config;
