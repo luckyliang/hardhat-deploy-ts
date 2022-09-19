@@ -1,46 +1,95 @@
-# Advanced Sample Hardhat Project
+# Hardhat project
 
-This project demonstrates an advanced Hardhat use case, integrating other tools commonly used alongside Hardhat in the ecosystem.
+查看命令
 
-The project comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts. It also comes with a variety of other tools, preconfigured to work with the project code.
+```bash
+npx hardhat
+```
 
-Try running some of the following tasks:
+帮助信息，如`test`
 
-```shell
-npx hardhat accounts
+```bash
+npx hardhat test --help
+```
+
+启动本地节点
+
+```bash
+npx hardhat node 
+```
+
+如果使用`hardhat-deploy`插件，不支持 上面这种网络, 需指定`hardhat`网络
+
+```bash
+npx hardhat node --network hardhat #会自动部署所有合约
+或
+npx hardhat node --network hardhat --no-deploy #只开启网络
+```
+
+编译
+
+```bash
 npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-npx hardhat help
-REPORT_GAS=true npx hardhat test
-npx hardhat coverage
-npx hardhat run scripts/deploy.ts
-TS_NODE_FILES=true npx ts-node scripts/deploy.ts
-npx eslint '**/*.{js,ts}'
-npx eslint '**/*.{js,ts}' --fix
-npx prettier '**/*.{json,sol,md}' --check
-npx prettier '**/*.{json,sol,md}' --write
-npx solhint 'contracts/**/*.sol'
-npx solhint 'contracts/**/*.sol' --fix
 ```
 
-# Etherscan verification
+测试
 
-To try out Etherscan verification, you first need to deploy a contract to an Ethereum network that's supported by Etherscan, such as Ropsten.
-
-In this project, copy the .env.example file to a file named .env, and then edit it to fill in the details. Enter your Etherscan API key, your Ropsten node URL (eg from Alchemy), and the private key of the account which will send the deployment transaction. With a valid .env file in place, first deploy your contract:
-
-```shell
-hardhat run --network ropsten scripts/deploy.ts
+```bash
+npx hardhat test #测试所有
+npx hardhat test test/Lock.ts #指定测试文件
 ```
 
-Then, copy the deployment address and paste it in to replace `DEPLOYED_CONTRACT_ADDRESS` in this command:
+部署
 
-```shell
-npx hardhat verify --network ropsten DEPLOYED_CONTRACT_ADDRESS "Hello, Hardhat!"
+```bash
+npx hardhat run deploy/deploy.ts #hardhat原部署方式
+npx hardhat deploy # hardhat-deploy 部署所有合约
+npx hardhat deploy --tasg lock #	部署指定合约, lock需要在部署脚本中被指定
 ```
 
-# Performance optimizations
+合约验证
 
-For faster runs of your tests and scripts, consider skipping ts-node's type checking by setting the environment variable `TS_NODE_TRANSPILE_ONLY` to `1` in hardhat's environment. For more details see [the documentation](https://hardhat.org/guides/typescript.html#performance-optimizations).
+https://hardhat.org/hardhat-runner/plugins/nomiclabs-hardhat-etherscan
+
+
+vscode 配置
+
+插件 
+`solidity`
+`hardhat-solidity` 
+
+工作区环境配置
+
+```json
+{
+    "files.autoSave": "afterDelay",
+    "editor.fontSize": 13,
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/node_modules":true
+    },
+    "solidity.defaultCompiler": "localFile", //默认使用本地编译
+    "solidity.compileUsingLocalVersion":"/Users/a123/work/compile/soljson-v0.8.7+commit.e28d00a7.js",
+    "solidity.remappingsUnix": [//unix 类型配置
+        "solidity.compileUsingLocalVersion=/Users/a123/work/compile/soljson-v0.8.7+commit.e28d00a7.js",
+        "@openzeppelin/=/usr/local/lib/node_modules/@openzeppelin"
+    ],      
+    "solidity.remappingsWindows": [     //windows 配置
+        //compileUsingLocalVersion设置本地编译文件，最好设置在项目目录下，测试在其他盘里会报错
+        "solidity.compileUsingLocalVersion=D:\\Program Files\\solidity\\soljson-v0.8.7+commit.e28d00a7.js",
+        //配置openzeppelin库位置
+        "@openzeppelin/=D:\\Program Files\\nvm\\v14.19.1\\node_modules\\@openzeppelin" 
+    ],
+    // "solidity.remappings": [ //同意配置建议使用上面的根据平台配置
+    //     "@openzeppelin/=D:\\Program Files\\nvm\\v14.19.1\\node_modules\\@openzeppelin"
+    // ],
+    // "solidity.compileUsingRemoteVersion": "v0.8.7+commit.e28d00a7", //配置远程编译版本
+    // "solidity.compileUsingRemoteVersion": "latest", //默认最新
+}
+
+```

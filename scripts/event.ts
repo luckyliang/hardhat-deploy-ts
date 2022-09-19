@@ -1,6 +1,5 @@
 import { ethers, network, deployments } from "hardhat";
 
-
 //执行npx hardhat test test/01-greeting-test.ts 进行监听
 //执行 npx hardhat run scripts/01-greeting-setting.ts 调用方法，会回调到01-greeting-test.ts文件中打印监听日志
 const filter = {
