@@ -5,9 +5,10 @@ export const developmentChains = ["hardhat", "localhost"]
  
 
 const verify = async (contractAddress: string, args: any[]) => {
-  console.log("Verifying contract...")
 
   if (!developmentChains.includes(network.name) && (process.env.infuraKey || process.env.bacApiKey)) {
+    console.log("Verifying contract...")
+
     try {
       await run("verify:verify", {
         address: contractAddress,

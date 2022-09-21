@@ -32,8 +32,4 @@ contract GovernanceToken is ERC20, ERC20Permit, ERC20Votes {
     {
         super._burn(account, amount);
     }
-
-    function issueToken(address to, uint256 amount) public {
-        _mint(to, amount);
-    }
 }

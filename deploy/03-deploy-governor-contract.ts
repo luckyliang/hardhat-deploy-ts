@@ -9,7 +9,7 @@ export default async function deployGovernor() {
     const governanceToken = await get("GovernanceToken")
     const timeLock = await get("TimeLock")
 
-    log("--------------------------")
+    log("\n---------------------\n")
     log("Deploying Governor Contract...")
 
     const governorContract = await deploy("GovernorContract", {
@@ -37,4 +37,4 @@ export default async function deployGovernor() {
         ])
 }
 
-deployGovernor.tags = ["governor"]
+deployGovernor.tags = ["all", "governor"]

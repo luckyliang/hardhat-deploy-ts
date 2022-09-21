@@ -8,6 +8,7 @@ export default async function deployGovernorToken() {
     const { deployer } = await getNamedAccounts()
     const { deploy, log } = deployments;
 
+    log("\n---------------------\n")
     log("Deploying Governanace Token ...")
 
     const governanceToken = await deploy("GovernanceToken", {
@@ -33,4 +34,4 @@ async function delegate(delegatedAccount: string) {
     console.log(`checkpoints: ${await governanceToken.numCheckpoints(delegatedAccount)}`);
 }
 
-deployGovernorToken.tags = ["GovernorToken"];
+deployGovernorToken.tags = ["all", "GovernorToken"];
