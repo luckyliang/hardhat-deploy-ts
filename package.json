@@ -10,7 +10,8 @@
     "balance": "npx hardhat balance",
     "verify": "npx hardhat verify",
     "coverage": "npx hardhat clean && npx hardhat coverage --network hardhat",
-    "typechain": "npx hardhat typechain"
+    "typechain": "npx hardhat typechain",
+    "clean": "npx hardhat clean"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-network-helpers": "^1.0.6",
