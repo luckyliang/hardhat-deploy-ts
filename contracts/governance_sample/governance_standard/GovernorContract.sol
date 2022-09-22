@@ -16,7 +16,7 @@ contract GovernorContract is
     GovernorTimelockControl
 {
     constructor(
-        IVotes _token,
+        IVotes _token, //投票或者发起提案所持有的Token
         TimelockController _timelock,
         uint256 _quorumPercentage,
         uint256 _votingPeriod,
@@ -57,6 +57,7 @@ contract GovernorContract is
         return super.quorum(blockNumber);
     }
 
+    //获取用户在某个区块下持有的Token数量
     function getVotes(address account, uint256 blockNumber)
         public
         view
@@ -84,6 +85,7 @@ contract GovernorContract is
         return super.propose(targets, values, calldatas, description);
     }
 
+    //提案者所需的最小数量， 默认为0，也就意味着任何人都可参与提案
     function proposalThreshold()
         public
         view

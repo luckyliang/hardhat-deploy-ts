@@ -18,7 +18,7 @@ export default async function setupContracts() {
     const adminRole = await timeLock.TIMELOCK_ADMIN_ROLE() //admin role
 
     await timeLock.grantRole(proposeRole, governor.address).then(tx => tx.wait(1))
-    await timeLock.grantRole(executorRole, ADDRESS_ZERO).then(tx => tx.wait(1)) //执行角色为zero，意味在投票结束后任何人都可以执行
+    await timeLock.grantRole(executorRole, ADDRESS_ZERO).then(tx => tx.wait(1)) //执行角色为zero，、任何人都拥有执行权限
     await timeLock.grantRole(adminRole, deployer).then(tx => tx.wait(1))
     log("Setting up contracts for roles completed")
 

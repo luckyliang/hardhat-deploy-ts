@@ -1,122 +1,58 @@
-# Hardhat project
 
-查看命令
 
-```bash
-npx hardhat
+## `GovernanceToken`
+
+继承于`ERC20Votes合约`，用于投票的TokenERC20代币，持有该Token越多，拥有的投票数越多，也可以设置代理投票，设置代理后所拥有的投票数转移到代理地址
+
+`Checkpoint`；结构体储存用户某个区块号的拥有的投票数
+
+## TimelockController
+
+用于记录提案进度：pending、Ready、Done
+
+使用`timestamps`储存提案和投票延迟时间，在延迟时间内可以进行投票，延迟时间后才能由执行角色执行
+
+1. 拥有提案角色（`PROPOSER_ROLE`）的用户调用`function _schedule(bytes32 id, uint256 delay) private` 方法储存提案延迟时间
+2. 拥有执行权限角色的用户最终调用`function _execute( address target, uint256 value, bytes calldata data ) internal virtual` 方法调用目标合约，提案id必须在`Ready`状态， 执行完成后会修改状态为`Done`状态
+
+## GovernorContract
+
+治理合约
+
+核心合约`Governor`
+
+提案方法
+
+```solidity
+function propose(
+        address[] memory targets,
+        uint256[] memory values,
+        bytes[] memory calldatas,
+        string memory description
+    ) public virtual override returns (uint256)
 ```
 
-帮助信息，如`test`
-
-```bash
-npx hardhat test --help
-```
-
-启动本地节点
-
-```bash
-npx hardhat node 
-```
-
-如果使用`hardhat-deploy`插件，不支持 上面这种网络, 需指定`hardhat`网络
-
-```bash
-npx hardhat node --network hardhat #会自动部署所有合约
-或
-npx hardhat node --network hardhat --no-deploy #只开启网络
-```
-
-编译
-
-```bash
-npx hardhat compile
-```
-
-测试
-
-```bash
-npx hardhat test #测试所有
-npx hardhat test test/Lock.ts #指定测试文件
-```
-
-部署
-
-```bash
-npx hardhat run deploy/deploy.ts #hardhat原部署方式
-npx hardhat deploy # hardhat-deploy 部署所有合约
-npx hardhat deploy --tasg lock #	部署指定合约, lock需要在部署脚本中被指定
-```
-
-合约验证
-
-https://hardhat.org/hardhat-runner/plugins/nomiclabs-hardhat-etherscan
 
 
-vscode 配置
 
-插件 
-`solidity`
-`hardhat-solidity` 
 
-工作区环境配置
 
-```json
-{
-    "files.autoSave": "afterDelay",
-    "editor.fontSize": 13,
-    "files.exclude": {
-        "**/.git": true,
-        "**/.svn": true,
-        "**/.hg": true,
-        "**/CVS": true,
-        "**/.DS_Store": true,
-        "**/Thumbs.db": true,
-        "**/node_modules":true
-    },
-    "solidity.defaultCompiler": "localFile", //默认使用本地编译
-    "solidity.compileUsingLocalVersion":"/Users/a123/work/compile/soljson-v0.8.7+commit.e28d00a7.js",
-    "solidity.remappingsUnix": [//unix 类型配置
-        "solidity.compileUsingLocalVersion=/Users/a123/work/compile/soljson-v0.8.7+commit.e28d00a7.js",
-        "@openzeppelin/=/usr/local/lib/node_modules/@openzeppelin"
-    ],      
-    "solidity.remappingsWindows": [     //windows 配置
-        //compileUsingLocalVersion设置本地编译文件，最好设置在项目目录下，测试在其他盘里会报错
-        "solidity.compileUsingLocalVersion=D:\\Program Files\\solidity\\soljson-v0.8.7+commit.e28d00a7.js",
-        //配置openzeppelin库位置
-        "@openzeppelin/=D:\\Program Files\\nvm\\v14.19.1\\node_modules\\@openzeppelin" 
-    ],
-    // "solidity.remappings": [ //同意配置建议使用上面的根据平台配置
-    //     "@openzeppelin/=D:\\Program Files\\nvm\\v14.19.1\\node_modules\\@openzeppelin"
-    // ],
-    // "solidity.compileUsingRemoteVersion": "v0.8.7+commit.e28d00a7", //配置远程编译版本
-    // "solidity.compileUsingRemoteVersion": "latest", //默认最新
-}
 
-```
 
-bsc主网网络节点
 
-https://bsc-dataseed1.defibit.io/
+相关链接
 
-https://bsc-dataseed1.ninicoin.io/
+[如何在 Solidity 中构建 DAO？](https://learnblockchain.cn/article/3997)
 
-https://bsc-dataseed2.defibit.io/
+[openzeppelin **governance**](https://docs.openzeppelin.com/contracts/4.x/api/governance)
 
-https://bsc-dataseed3.defibit.io/
 
-https://bsc-dataseed4.defibit.io/
+PatrickDao
 
-https://bsc-dataseed2.ninicoin.io/
+[github](https://github.com/PatrickAlphaC/dao-template.git)
 
-https://bsc-dataseed3.ninicoin.io/
+Makerdao
 
-https://bsc-dataseed4.ninicoin.io/
+[官网](https://makerdao.com/zh-CN/)
 
-https://bsc-dataseed1.binance.org/
-
-https://bsc-dataseed2.binance.org/
-
-https://bsc-dataseed3.binance.org/
-
-https://bsc-dataseed4.binance.org/
-
+[MakerDAO Technical Docs](https://docs.makerdao.com/)
