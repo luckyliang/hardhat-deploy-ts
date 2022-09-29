@@ -12,6 +12,4 @@ contract TestERC20Token is ERC20,  ERC20Permit, Ownable {
         _mint(_msgSender(), 100000000 * 10 ** decimals());
     }
 
-    
-    
 }

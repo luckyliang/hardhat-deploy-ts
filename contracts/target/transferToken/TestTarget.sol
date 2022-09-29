@@ -14,15 +14,10 @@ contract TestTarget is Ownable, IERC1271 {
         exchange = _exchange;
     }
 
-    function callExchange(bytes32 hash, bytes calldata signature)
-        external
-        view
-        returns (bool)
-    {
-        return
-            Exchange(exchange).validateContractAuthorization(
-                hash,
+    function callExchange(bytes32 hash, bytes calldata signature) external {
+        Exchange(exchange).exchange(
                 address(this),
+                hash,
                 signature
             );
     }

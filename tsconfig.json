@@ -7,6 +7,6 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["./scripts", "./test", "./typechain","./deploy", "helper.config.ts"],
+  "include": ["./scripts", "./test", "./typechain","./deploy", "helper.config.ts", "./utils"],
   "files": ["./hardhat.config.ts"]
 }

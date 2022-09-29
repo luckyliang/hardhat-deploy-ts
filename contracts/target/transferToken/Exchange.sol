@@ -6,27 +6,40 @@ import "@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol";
 
 contract Exchange is EIP712 {
 
-    bool public validate;
+    bool public success;
 
     bytes4 internal constant EIP_1271_MAGICVALUE = 0x1626ba7e;
 
     // solhint-disable-next-line var-name-mixedcase
     bytes32 private constant _PERMIT_TYPEHASH =
-        keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
-
-
-
+        keccak256("order(address owner,uint256 tokenId)");
+    
     constructor() EIP712("exchange", "1") {
 
     }
 
-    //验证签名转代币
+    function structHash(address owner, uint256 tokenId) public pure returns(bytes32) {
+        return keccak256(abi.encode(_PERMIT_TYPEHASH, owner, tokenId));
+    }
+
+    function sigHash(address owner, uint256 tokenId) public view returns(bytes32) {
+        return _hashTypedDataV4((structHash(owner, tokenId)));
+    }
+
+    function DOMAIN_SEPARATOR() external view returns (bytes32) {
+        return _domainSeparatorV4();
+    }
     
+    function exchange(address maker, bytes32 hash, bytes memory signature) public {
+        require(validateContractAuthorization(maker, hash, signature), "signature invalidate");
+        success = true;
+        
+    }
 
-
+    //验证签名转代币
     function validateContractAuthorization(
-        bytes32 hash,
         address maker,
+        bytes32 hash,
         bytes memory signature
 
     ) public view returns (bool) {
