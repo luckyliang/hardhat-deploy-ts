@@ -38,8 +38,6 @@ async function main() {
     const signAccount = recoverAddress(typeDataHash, sign)
     console.log("signAccount = ", signAccount);
 
-    
-
     const target = await ethers.getContract<TestTarget>("TestTarget")
     
     const adr = await target.exchange();

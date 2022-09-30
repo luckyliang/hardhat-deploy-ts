@@ -6,10 +6,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/interfaces/IERC1271.sol";
 
 
-contract TestERC20Token is ERC20,  ERC20Permit, Ownable {
+contract TestERC20Permit is ERC20,  ERC20Permit, Ownable {
     
     constructor() ERC20("TEST TOKEN", "TTK") ERC20Permit("TEST TOKEN") {
         _mint(_msgSender(), 100000000 * 10 ** decimals());
     }
-
 }
