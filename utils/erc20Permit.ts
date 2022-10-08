@@ -1,6 +1,6 @@
-import { BigNumberish, ethers, Signature, TypedDataField } from "ethers";
+import { BigNumber, BigNumberish, ethers, Signature, TypedDataDomain, TypedDataField } from "ethers";
 import { defaultAbiCoder, keccak256, toUtf8Bytes } from "ethers/lib/utils";
-import { DomainSeparator, signTypedData, signWithPrivateKey, toTypedDataHash } from "./eip712";
+import { signTypedData, signWithPrivateKey, toTypedDataHash } from "./eip712";
 import { SignatureLike } from "@ethersproject/bytes";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
@@ -56,7 +56,7 @@ export const erc20PermitTypes =  {
  * @param values 
  * @returns 
  */
-export async function erc20PermitSignWithSinger(signer: SignerWithAddress, domainSeparator: DomainSeparator, values: ERC20PermitValues): Promise<string> {
+export async function erc20PermitSignWithSinger(signer: SignerWithAddress, domainSeparator: TypedDataDomain, values: ERC20PermitValues): Promise<string> {
 
     return signTypedData(signer, domainSeparator, erc20PermitTypes, values)
 

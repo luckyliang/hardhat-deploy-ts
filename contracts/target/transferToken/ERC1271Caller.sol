@@ -6,7 +6,8 @@ import "@openzeppelin/contracts/interfaces/IERC1271.sol";
 
 import "./Exchange.sol";
 
-contract TestTarget is Ownable, IERC1271 {
+contract ERC1271Caller is Ownable, IERC1271 {
+    
     bool public isValidate;
     address public exchange;
 
@@ -21,6 +22,9 @@ contract TestTarget is Ownable, IERC1271 {
                 signature
             );
     }
+
+    
+
 
     // 实际上还是外部账户进行签名， 然后验证签名者是否是某个特定的账户，验证合约会调用该合约进行验证
     function isValidSignature(bytes32 hash, bytes memory signature)

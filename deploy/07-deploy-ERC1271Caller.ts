@@ -1,19 +1,19 @@
 import { deployments, getNamedAccounts } from "hardhat"
 
 
-export default async function deployTestTarget() {
+export default async function deployERC1271Caller() {
     
     const {  deployer } = await getNamedAccounts()
     const exchange = (await deployments.get("Exchange")).address;
 
-    const testTarget = await deployments.deploy("TestTarget", {
+    const erc1271Caller = await deployments.deploy("ERC1271Caller", {
         from: deployer,
         log: true,
         args: [exchange]
     })
 
-    console.log(`testTarget address = ${testTarget.address}`);
+    console.log(`testTarget address = ${erc1271Caller.address}`);
     
 }
 
-deployTestTarget.tags = ["all", "testTarget"]
+deployERC1271Caller.tags = ["all", "erc1271Caller"]

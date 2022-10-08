@@ -1,7 +1,7 @@
 
-import { defaultAbiCoder, keccak256, recoverAddress, solidityPack, toUtf8Bytes, joinSignature } from "ethers/lib/utils";
+import { defaultAbiCoder, keccak256, recoverAddress, solidityPack, toUtf8Bytes, joinSignature, verifyTypedData } from "ethers/lib/utils";
 import { ecsign } from "ethereumjs-util";
-import { BigNumberish, ethers,  Signature, TypedDataField } from "ethers";
+import { BigNumberish, ethers,  Signature, TypedDataDomain, TypedDataField } from "ethers";
 import { SignatureLike } from "@ethersproject/bytes";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
@@ -11,12 +11,6 @@ export const TYPE_HASH = keccak256(
     toUtf8Bytes("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)")
 );
 
-export interface DomainSeparator {
-    name: string,
-    version: string,
-    chainId: BigNumberish,
-    verifyingContract: string
-}
 
 // Gets the EIP712 domain separator
 export function domainSeparatorV4(
@@ -65,7 +59,7 @@ export function signWithPrivateKey(_privateKey: string, _typeDataHash: string): 
     const typeDataHash = _typeDataHash.startsWith("0x") ? _typeDataHash.slice(2) : _typeDataHash;
     const privateKey = _privateKey.startsWith("0x") ? _privateKey.slice(2) : _privateKey;
     
-    const signature = ecsign(Buffer.from(typeDataHash.slice(2), 'hex'), Buffer.from(privateKey.slice(2),'hex'))
+    const signature = ecsign(Buffer.from(typeDataHash, 'hex'), Buffer.from(privateKey,'hex'))
     console.log("signature = ", signature);
 
     const signatureLike: SignatureLike = {
@@ -78,13 +72,13 @@ export function signWithPrivateKey(_privateKey: string, _typeDataHash: string): 
 }
 
 
-/**
- * 
- * @param signatureLike 签名SignatureLike类型
- * @returns bytes 用于712 验证 时传入signature
- * @openzeppelin/contract/utils/cryptography/ECDSA.sol 以下方法传入的signature
- * function recover(bytes32 hash, bytes memory signature) internal pure returns (address)
- */
+// /**
+//  * 
+//  * @param signatureLike 签名SignatureLike类型
+//  * @returns bytes 用于712 验证 时传入signature
+//  * @openzeppelin/contract/utils/cryptography/ECDSA.sol 以下方法传入的signature
+//  * function recover(bytes32 hash, bytes memory signature) internal pure returns (address)
+//  */
 export function signatureLikeToBytesString(signatureLike: SignatureLike): string {
     return joinSignature(signatureLike)
 }
@@ -105,14 +99,20 @@ export function signatureLikeToBytesString(signatureLike: SignatureLike): string
  * @param values messageValues
  * @returns typeDataHash (signFlag)用于签名的数据hash
  */
-export async function signTypedData(signer: SignerWithAddress, domainSeparator: DomainSeparator, types: Record<string, TypedDataField[]>, values: Record<string, any>): Promise<string> {
+export async function signTypedData(signer: SignerWithAddress, domainSeparator: TypedDataDomain, types: Record<string, TypedDataField[]>, values: Record<string, any>): Promise<string> {
     return signer._signTypedData(domainSeparator, types, values)
 }
 
 
-export async function signWithSigner(signer: SignerWithAddress, signTypeDataHash: string): Promise<Signature> {
-    const sign = ethers.utils.splitSignature(signTypeDataHash)
-    return sign;
+//获取签名
+export  function signatureWithTypeDataHash(signTypeDataHash: string): Signature {
+    return ethers.utils.splitSignature(signTypeDataHash)
 }
 
+
+export function verifySignature(domain: TypedDataDomain, types: Record<string, Array<TypedDataField>>, value: Record<string, any>, signature: SignatureLike): string {
+
+    return verifyTypedData(domain, types, value, signature)
+    
+}
 

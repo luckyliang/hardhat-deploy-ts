@@ -31,9 +31,8 @@ contract Exchange is EIP712 {
     }
     
     function exchange(address maker, bytes32 hash, bytes memory signature) public {
-        require(validateContractAuthorization(maker, hash, signature), "signature invalidate");
+        require(validateContractAuthorization(maker, hash, signature), "Exchange: signature invalidate");
         success = true;
-        
     }
 
     //验证签名转代币
