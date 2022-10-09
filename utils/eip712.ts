@@ -49,7 +49,7 @@ export function toTypedDataHash(domainSeparator: string, structHash: string): st
 
 /**
  * 通过私钥签名
- * @param _typeDataHash 用于签名的hash
+ * @param _typeDataHash 用于签名的hash bytes32
  * @param _privateKey 私钥
  * @returns 用于712验证，SignatureLike.v SignatureLike.r SignatureLike.s
  * function recover(bytes32 hash,uint8 v,bytes32 r,bytes32 s) internal pure returns (address)
@@ -60,7 +60,6 @@ export function signWithPrivateKey(_privateKey: string, _typeDataHash: string): 
     const privateKey = _privateKey.startsWith("0x") ? _privateKey.slice(2) : _privateKey;
     
     const signature = ecsign(Buffer.from(typeDataHash, 'hex'), Buffer.from(privateKey,'hex'))
-    console.log("signature = ", signature);
 
     const signatureLike: SignatureLike = {
         r:  "0x" + signature.r.toString('hex'),

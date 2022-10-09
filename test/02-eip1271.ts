@@ -2,7 +2,7 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { assert } from "chai";
 import { BigNumberish, TypedDataDomain } from "ethers";
-import { defaultAbiCoder, joinSignature, keccak256, recoverAddress, toUtf8Bytes } from "ethers/lib/utils";
+import { defaultAbiCoder, hashMessage, joinSignature, keccak256, recoverAddress, toUtf8Bytes, _TypedDataEncoder } from "ethers/lib/utils";
 import { deployments, ethers } from "hardhat";
 import { type } from "os";
 import { ERC1271Caller, Exchange } from "../typechain-types";
@@ -22,7 +22,7 @@ describe("eip1271 contract signature", async () => {
         ]
     }
 
-    const getSignTypeDataHash = async (owner: string, tokenId: BigNumberish) : Promise<string> => {
+    const getSignTypeData = async (owner: string, tokenId: BigNumberish) : Promise<string> => {
 
         const signer = await ethers.getSigner(owner)
 
@@ -38,8 +38,7 @@ describe("eip1271 contract signature", async () => {
             tokenId: tokenId,
         }
 
-        const signTypeDataHash = await signTypedData(signers[0], domainSeparator, types, signValues)
-        return signTypeDataHash
+        return await signTypedData(signers[0], domainSeparator, types, signValues)
     }
 
     const getTypeDataHash = async (owner: string, tokenId: BigNumberish): Promise<string> => {
@@ -65,41 +64,85 @@ describe("eip1271 contract signature", async () => {
         signers = await ethers.getSigners()
     })
 
-    //eip1271   合约签名实际上还是用户进行签名，然后在发起签名的合约中进行验证
-    it("verify ERC1271",async () => {
-        const owenr = signers[0].address
-        console.log("owner = ", owenr);
-        
-        assert.equal(owenr, await erc1271Caller.owner(), "contract owner error")
-        
-        const typedatahash = await getTypeDataHash(owenr, 1)
-        console.log("typedataHash = ", typedatahash);
+    //使用signer 签名
+    it("verify ERC1271 with signer",   async () => {
 
-        const sigTypeData = await getSignTypeDataHash(owenr, 1)
+        const owner = signers[0].address
+
+        assert.equal(owner, await erc1271Caller.owner(), "contract owner error")
+
+        const sigTypeData = await getSignTypeData(owner, 1)
         console.log("sigTypeData = ", sigTypeData);
 
-        // const verifyHash = keccak256(sigTypeData)
-        // console.log(verifyHash);
-        // 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
-        
-        const signature =  signatureWithTypeDataHash(sigTypeData) //?
-        
-        const signatureLike = signWithPrivateKey("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80", typedatahash)
-        console.log(signatureLike);
-        
-        // console.log(signatureStr);
-        console.log("验证签名者：", recoverAddress(typedatahash, signatureLike));
-        const real = joinSignature(signatureLike)
-        console.log("real = ", real);
-        
+        //本地验证
+        const signature =  signatureWithTypeDataHash(sigTypeData)
+        console.log("signature = ", signature);
 
-        await erc1271Caller.callExchange(typedatahash, joinSignature(signatureLike))
+        const signatureAddress = verifySignature(
+            {
+                name: "exchange",
+                version: "1",
+                chainId: await signers[0].getChainId(),
+                verifyingContract: exchange.address
+            },
+            types,
+            {
+                owner: owner,
+                tokenId: 1,
+            },
+            signature
+        )
 
+        console.log(signatureAddress);
 
+        //线上验证
+        const hash = _TypedDataEncoder.hash(
+            {
+                name: "exchange",
+                version: "1",
+                chainId: await signers[0].getChainId(),
+                verifyingContract: exchange.address
+            },
+            types,
+            {
+                owner: owner,
+                tokenId: 1,
+            },
+        )
+
+        console.log("hash = ", hash);
+        
+        
+        await erc1271Caller.callExchange(hash, sigTypeData)
 
         assert.isTrue(await exchange.success(), "signature invalidate");
-
         
+    })
+
+     //eip1271   合约签名实际上还是用户进行签名，然后在发起签名的合约中进行验证
+     it("verify ERC1271 with privateKey",async () => {
+        const owner = signers[0].address
+        console.log("owner = ", owner);
+        
+        assert.equal(owner, await erc1271Caller.owner(), "contract owner error")
+        
+        //hash
+        const typedatahash = await getTypeDataHash(owner, 1)
+        console.log("typedataHash = ", typedatahash);
+        const signatureLike = signWithPrivateKey("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80", typedatahash)
+        //本地验证
+        console.log("验证签名者：", recoverAddress(typedatahash, signatureLike));
+
+        const signature = joinSignature(signatureLike)
+        console.log("signature = ", signature);
+        
+        //hash
+        //0xb08f1815524b03adc2beea45b6d21d38e71d9ce3e16e9d8a959a51a5de72742c
+        //signature
+        //0xc674754a8bf260c571bdd22aea4233d13bf1f268b5f99f35f5143e3179162fcd3bc8ebb3fca7adeaa9445966e7b2b400b3e068823c1e1d1ae30add5801a5436a1c
+        await erc1271Caller.callExchange(typedatahash, signature)
+
+        assert.isTrue(await exchange.success(), "signature invalidate");
 
     })
     
