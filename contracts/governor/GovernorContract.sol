@@ -19,8 +19,8 @@ contract GovernorContract is
         IVotes _token, //投票或者发起提案所持有的Token
         TimelockController _timelock,
         uint256 _quorumPercentage,
-        uint256 _votingPeriod,  //投票周期（区块号）
-        uint256 _votingDelay    //投票延迟（区块号） 开始区块 = block.number + _votingDelay, 结束区块 = 开始区块 + _votingPeriod 
+        uint256 _votingPeriod, //投票周期（区块号）
+        uint256 _votingDelay //投票延迟（区块号） 开始区块 = block.number + _votingDelay, 结束区块 = 开始区块 + _votingPeriod
     )
         Governor("GovernorContract")
         GovernorSettings(_votingDelay, _votingPeriod, 0)
@@ -66,7 +66,6 @@ contract GovernorContract is
     {
         return _getVotes(account, blockNumber, _defaultParams());
     }
-
 
     function state(uint256 proposalId)
         public
