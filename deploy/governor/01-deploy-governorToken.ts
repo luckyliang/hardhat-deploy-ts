@@ -1,6 +1,6 @@
 import { getNamedAccounts, deployments, ethers } from "hardhat";
-import { GovernanceToken } from "../typechain-types";
-import verify from "../utils/helper-verify";
+import { GovernanceToken } from "../../typechain-types";
+import verify from "../../utils/helper-verify";
 
 
 export default async function deployGovernorToken() {

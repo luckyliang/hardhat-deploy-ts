@@ -1,7 +1,7 @@
 import { getNamedAccounts, deployments, ethers } from "hardhat";
-import { MIN_DELAY } from "../helper.config";
-import { GovernanceToken } from "../typechain-types";
-import verify from "../utils/helper-verify";
+import { MIN_DELAY } from "../../helper.config";
+import { GovernanceToken } from "../../typechain-types";
+import verify from "../../utils/helper-verify";
 
 
 export default async function deployTimeLock() {
