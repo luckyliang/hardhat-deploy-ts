@@ -59,7 +59,8 @@ const config: HardhatUserConfig = {
     },
     localhost:{
       url: "http://127.0.0.1:8545/",
-      chainId: 31337
+      // chainId: 31337,
+      chainId: 1337
     },
     mainnet: {
       url: `https://mainnet.infura.io/v3/${process.env.infuraKey}`,
