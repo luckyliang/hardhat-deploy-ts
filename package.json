@@ -1,5 +1,18 @@
 {
   "name": "hardhat-project",
+  "scripts": {
+    "chain": "npx hardhat node --network hardhat",
+    "fork": "npx hardhat node --no-deploy --network hardhat --fork https://mainnet.infura.io/v3/460f40a260564ac4a4f4b3fffb032dad",
+    "test": "npx hardhat test --network hardhat",
+    "compile": "npx hardhat compile",
+    "deploy": "npx hardhat deploy --export-all ./deployJson/hardhat_contracts.json",
+    "accounts": "npx hardhat accounts",
+    "balance": "npx hardhat balance",
+    "verify": "npx hardhat verify",
+    "coverage": "npx hardhat clean && npx hardhat coverage --network hardhat",
+    "typechain": "npx hardhat typechain",
+    "clean": "npx hardhat clean"
+  },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.1.1",
     "@nomiclabs/hardhat-etherscan": "^3.0.3",
