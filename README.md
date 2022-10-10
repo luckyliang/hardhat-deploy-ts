@@ -48,5 +48,6 @@ For faster runs of your tests and scripts, consider skipping ts-node's type chec
 
 ## Upgrades Plugins
 
-https://docs.openzeppelin.com/upgrades-plugins/1.x/
+[官方文档](https://docs.openzeppelin.com/upgrades-plugins/1.x/)
 
+[OpenZeppelin Upgrades: Step by Step Tutorial for Hardhat](https://forum.openzeppelin.com/t/openzeppelin-upgrades-step-by-step-tutorial-for-hardhat/3580)

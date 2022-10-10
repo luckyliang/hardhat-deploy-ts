@@ -5,8 +5,8 @@ import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
-import "solidity-coverage";
-import "hardhat-deploy";
+import '@openzeppelin/hardhat-upgrades';
+import "@nomiclabs/hardhat-ethers";
 
 // //引入环境配置变量
 dotenv.config({path: ".env"}); //环境加载
@@ -75,18 +75,6 @@ const config: HardhatUserConfig = {
       chainId: 4,
       accounts: testAccount
     }
-  },
-  namedAccounts: {
-    deployer: {
-      default: 0, // here this will by default take the first account as deployer
-      // 97:0 //chainId: accounts[0], 指定链
-      // 1: 0xA296a3d5F026953e17F472B497eC29a5631FB51B //指定账户
-      //指定网络
-      bsctest: 0
-    },
-    user1: {
-      default: 1
-    },
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
