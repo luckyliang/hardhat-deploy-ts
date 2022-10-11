@@ -8,6 +8,7 @@ import "hardhat-gas-reporter";
 import '@openzeppelin/hardhat-upgrades';
 import "@nomiclabs/hardhat-ethers";
 import fs from "fs";
+import "@walletconnect/web3-provider";
 // //引入环境配置变量
 // dotenv.config({path: ".env"}); //环境加载
 
@@ -50,18 +51,20 @@ const config: HardhatUserConfig = {
     hardhat: {},
     localhost:{
       url: "http://127.0.0.1:8545/",
+      chainId: 31337
       //使用本地测试账户：通过npx hardhat node --network hardhat --no-deploy 命令可查看
-    
     },
     bsc: {
       url: "https://bsc-dataseed1.binance.org/",
       chainId: 56,
       // accounts: accounts,
+      accounts: "remote"
     },
     bsctest: {
-      url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+      url: "https://data-seed-prebsc-1-s3.binance.org:8545/",
       allowUnlimitedContractSize:true,
       chainId: 97,
+      accounts: "remote"
       // accounts: accounts,
       //live: false, //指定是否是一个线上的链，localhost and hardhat where the default is false
       //tags: ["bsctest"] //设置网络别名，可通过hre.network.tags获得
@@ -77,6 +80,7 @@ const config: HardhatUserConfig = {
       // accounts: accounts
     }
   },
+  
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
     currency: "USD",
