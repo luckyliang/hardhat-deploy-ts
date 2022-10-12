@@ -1,6 +1,6 @@
 import { deployments, ethers, getNamedAccounts } from "hardhat";
-import { ADDRESS_ZERO } from "../../helper.config";
-import { GovernanceToken, GovernorContract, TimeLock } from "../../typechain-types";
+import { ADDRESS_ZERO } from "../helper.config";
+import { GovernanceToken, GovernorContract, TimeLock } from "../typechain-types";
 
 
 export default async function setupContracts() {

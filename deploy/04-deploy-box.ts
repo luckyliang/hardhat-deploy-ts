@@ -1,6 +1,6 @@
 import { deployments, ethers, getNamedAccounts } from "hardhat";
-import { Box, TimeLock } from "../../typechain-types";
-import verify from "../../utils/helper-verify";
+import { Box, TimeLock } from "../typechain-types";
+import verify from "../utils/helper-verify";
 
 export default async function deployBox() {
     const { deployer } = await getNamedAccounts()

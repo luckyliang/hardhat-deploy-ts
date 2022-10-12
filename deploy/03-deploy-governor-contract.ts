@@ -1,6 +1,6 @@
 import { deployments, getNamedAccounts } from "hardhat";
-import { QUORUM_PERCENTAGE, VOTING_PERIOD, VOTING_DELAY } from "../../helper.config";
-import verify from "../../utils/helper-verify";
+import { QUORUM_PERCENTAGE, VOTING_PERIOD, VOTING_DELAY, PROPOSAL_THRESHOLD } from "../helper.config";
+import verify from "../utils/helper-verify";
 
 export default async function deployGovernor() {
     const { deployer } = await getNamedAccounts()
@@ -33,7 +33,8 @@ export default async function deployGovernor() {
             timeLock.address,
             QUORUM_PERCENTAGE,
             VOTING_PERIOD,
-            VOTING_DELAY
+            VOTING_DELAY,
+            PROPOSAL_THRESHOLD
         ])
 }
 

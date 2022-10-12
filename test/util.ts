@@ -1,18 +1,18 @@
 
-import { BigNumberish } from "ethers";
-import { defaultAbiCoder, keccak256, toUtf8Bytes } from "ethers/lib/utils";
+import { mineUpTo } from "@nomicfoundation/hardhat-network-helpers";
+import { latestBlock } from "@nomicfoundation/hardhat-network-helpers/dist/src/helpers/time";
+import { NumberLike } from "@nomicfoundation/hardhat-network-helpers/dist/src/types";
 
-export interface Order {
-    owner: string,
-    tokenId: BigNumberish
+export async function moveToBlock(blockNumber: number) {
+    console.log(`moving to blockNumber ${blockNumber}`);
+    const latest = await latestBlock()
+    await mineUpTo(blockNumber)
+    const movedBlackNumber = blockNumber - latest;
+    console.log(`moved ${movedBlackNumber} block`);
 }
 
-const ORDER_TYPEHASH =
-    keccak256(toUtf8Bytes("order(address owner,uint256 tokenId)"));
-
-export function orderStructHash(order: Order) {
-    return keccak256(defaultAbiCoder.encode(
-        ["bytes32", "address", "uint256"],
-        [ORDER_TYPEHASH, order.owner, order.tokenId]
-    ))
+export async function moveBlock(block:number) {
+    const latest = await latestBlock()
+    const toLatest = latest + block
+    await moveToBlock(toLatest)
 }

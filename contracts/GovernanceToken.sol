@@ -2,11 +2,13 @@
 pragma solidity ^0.8.2;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 
-contract GovernanceToken is ERC20, ERC20Votes {
 
-    constructor() ERC20("GovernanceToken", "GTK") ERC20Permit("GovernanceToken") {
-        _mint(msg.sender, 10000000 * 10 ** decimals());
+contract GovernanceToken is ERC20, ERC20Permit, ERC20Votes {
+
+    constructor(uint256 _totalSupply) ERC20("GovernanceToken", "GTK") ERC20Permit("GovernanceToken") {
+        _mint(msg.sender, _totalSupply);
     }
 
     // The functions below are overrides required by Solidity.
@@ -31,4 +33,6 @@ contract GovernanceToken is ERC20, ERC20Votes {
     {
         super._burn(account, amount);
     }
+
+    
 }
