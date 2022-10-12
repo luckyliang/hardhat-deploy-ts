@@ -48,6 +48,7 @@ const config: HardhatUserConfig = {
   },
   defaultNetwork: defaultNetwork,
   networks: { 
+    
     hardhat: {},
     localhost:{
       url: "http://127.0.0.1:8545/",
@@ -58,14 +59,15 @@ const config: HardhatUserConfig = {
       url: "https://bsc-dataseed1.binance.org/",
       chainId: 56,
       // accounts: accounts,
-      accounts: "remote"
+      accounts: "remote",
+      timeout: 4000000
     },
     bsctest: {
       url: "https://data-seed-prebsc-1-s3.binance.org:8545/",
       allowUnlimitedContractSize:true,
       chainId: 97,
-      accounts: "remote"
-      // accounts: accounts,
+      // accounts: "remote"
+      accounts: accounts,
       //live: false, //指定是否是一个线上的链，localhost and hardhat where the default is false
       //tags: ["bsctest"] //设置网络别名，可通过hre.network.tags获得
     },
@@ -86,7 +88,8 @@ const config: HardhatUserConfig = {
     currency: "USD",
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    
+    apiKey: "VJ946Q4WM5W4J8NYQUKK7M121HJC5U314D",
   },
 };
 
