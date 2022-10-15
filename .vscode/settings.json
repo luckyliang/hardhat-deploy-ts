@@ -1,6 +1,6 @@
 {
     "files.autoSave": "afterDelay",
-    "editor.fontSize": 13,
+    "editor.fontSize": 12,
     "files.exclude": {
         "**/.git": true,
         "**/.svn": true,

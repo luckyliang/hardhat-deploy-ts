@@ -5,8 +5,9 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "resolveJsonModule": true
   },
-  "include": ["./scripts", "./test", "./typechain","./deploy"],
+  "include": ["./scripts", "./deploy", "./test", "./typechain-types", "./eip-712-types", "./*.config.ts"],
   "files": ["./hardhat.config.ts"]
 }
