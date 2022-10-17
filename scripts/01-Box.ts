@@ -21,7 +21,7 @@ async function main() {
   const web3Provider = new providers.Web3Provider(provider)
   
   const signer = web3Provider.getSigner()
-  web3Provider.provider
+  
   const address = await signer.getAddress()
   console.log(address);
   
