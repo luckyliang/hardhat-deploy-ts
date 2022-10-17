@@ -79,6 +79,12 @@ function _afterTokenTransfer(
 
 投票结束区块 = 投票开始区块 + `votingPeriod`
 
+### GovernorCountingSimple
+
+统计投票（赞成，反对，弃权）数量，`_countVote()`
+
+通过`proposalVotes(uint256 proposalId)`返回3中投票数量
+
 ### GovernorVotesQuorumFraction
 
 计算投票是否成功
@@ -89,17 +95,31 @@ function _afterTokenTransfer(
 
 quorumNumerator： 设置的比例
 
-投票成功： 赞成票 + 弃权票 >= 总发行量 * 设置的比例 / 100
+投票成功状态： 赞成票 + 弃权票 >= 总发行量 * 设置的比例 / 100 && 赞成票 > 反对票 && 投票结束
 
 反之失败
 
-### TimeLock 合约
+### GovernorTimelockControl
 
 为治理决策添加时间锁。 如果用户在执行之前不同意某个决定，这允许用户退出系统。 结合使用 OpenZeppelin 的 TimelockController 和GovernorTimelockControl 模块。
 
-注意：使用时间锁时，执行提案的是时间锁，因此时间锁应该持有任何资金、所有权和访问控制角色。 在 4.5 版本之前，当使用时间锁时，无法在总督合约中收回资金！ 在 4.3 版本之前，当使用 Compound Timelock 时，时间锁中的 ETH 是不容易获取的。
+1. 投票成功后，调用`queue()`加入队列, 加入队列时会判断提案是否投票成功，然后调用`TimelockController`的`queue()`方法加入队列
+2. 加入执行`queue`后，会有一个最小延迟执行（`minDelay`）时间，主要目的是如果发现提案有问题，可以取消该提案，达到最小延长后才可以调用`execute()`方法来执行提案，在`TimelockController`合约中的`execute`会判断`EXECUTOR_ROLE`角色，如果设置为`address(0)`代表任何人都可以执行该提案
 
-TimelockController 使用我们需要了解的 AccessControl 设置来设置角色。
+注意：**使用时间锁时，执行提案的是时间锁，因此时间锁应该持有任何资金、所有权和访问控制角色。 在 4.5 版本之前，当使用时间锁时，无法在合约中收回资金！ 在 4.3 版本之前，当使用 Compound Timelock 时，时间锁中的 ETH 是不容易获取的。**
+
+
+
+## TimelockController
+
+用于记录提案执行进度：pending、Ready、Done
+
+使用`timestamps`储存提案和投票延迟时间，在延迟时间内可以进行投票，延迟时间后才能由执行角色执行
+
+1. 拥有提案角色（`PROPOSER_ROLE`）的用户调用`function _schedule(bytes32 id, uint256 delay) private` 方法储存提案延迟时间
+2. 拥有执行权限角色的用户最终调用`function _execute( address target, uint256 value, bytes calldata data ) internal virtual` 方法调用目标合约，提案id必须在`Ready`状态， 执行完成后会修改状态为`Done`状态
+
+TimelockController 需要了解的 AccessControl 设置来设置角色。
 
 Proposer 角色负责 排队操作：这是应该授予Governor 实例的角色，并且它应该可能是系统中唯一的提议者。
 
@@ -107,31 +127,17 @@ Executor 角色负责执行 已经可用的操作：我们可以将此角色分�
 
 最后是 Admin 角色，它可以授予和撤销之前的两个角色：这是一个非常敏感的角色，将自动授予部署者和时间锁本身，但部署者应在设置后放弃。
 
-
-
-## TimelockController
-
-用于记录提案进度：pending、Ready、Done
-
-使用`timestamps`储存提案和投票延迟时间，在延迟时间内可以进行投票，延迟时间后才能由执行角色执行
-
-1. 拥有提案角色（`PROPOSER_ROLE`）的用户调用`function _schedule(bytes32 id, uint256 delay) private` 方法储存提案延迟时间
-2. 拥有执行权限角色的用户最终调用`function _execute( address target, uint256 value, bytes calldata data ) internal virtual` 方法调用目标合约，提案id必须在`Ready`状态， 执行完成后会修改状态为`Done`状态
-
-
 ## GovernorContract
-
-治理合约
 
 相关合约
 
-1. GovernorSettings：设置投票时间和最低持有`token`数量
-   GovernorCountingSimple：计算投票权重，没人只能投票一次
+1. GovernorSettings：设置投票时间和委托人最低持有`token`票数（注意不是余额）
+   GovernorCountingSimple：计算投票权重，每人只能投票一次
    GovernorVotes：连接token，获取投票权重
-   GovernorVotesQuorumFraction：获取投票人百分比
-   GovernorTimelockControl：Governor时间控制器, 构造函数中传入时间控制器（`TimelockController`），将提案加入队列和执型
+   GovernorVotesQuorumFraction：获取投票人百分比， 计算提案投票结果
+   GovernorTimelockControl：Governor时间控制器, 构造函数中传入时间控制器（`TimelockController`），将提案加入队列和执行
 
-核心合约`Governor`
+核心合约`Governor`执行流程
 
 构造方法
 

@@ -21,4 +21,4 @@ export const FUNC = "store"
 export const PROPOSAL_DESCRIPTION = "Proposal #1 77 in the Box!"
 
 
-export const TOTAL_SUPPLY = ethers.utils.parseEther("2000000")
+export const TOTAL_SUPPLY = ethers.utils.parseEther("100000")

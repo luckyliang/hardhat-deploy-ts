@@ -102,7 +102,6 @@ export async function signTypedData(signer: SignerWithAddress, domainSeparator: 
     return signer._signTypedData(domainSeparator, types, values)
 }
 
-
 //获取签名
 export  function signatureWithTypeDataHash(signTypeDataHash: string): Signature {
     return ethers.utils.splitSignature(signTypeDataHash)

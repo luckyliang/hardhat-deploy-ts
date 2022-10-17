@@ -1,5 +1,5 @@
 import { BigNumber, BigNumberish, ethers, Signature, TypedDataDomain, TypedDataField } from "ethers";
-import { defaultAbiCoder, keccak256, toUtf8Bytes } from "ethers/lib/utils";
+import { defaultAbiCoder, keccak256, toUtf8Bytes, _TypedDataEncoder } from "ethers/lib/utils";
 import { signTypedData, signWithPrivateKey, toTypedDataHash } from "./eip712";
 import { SignatureLike } from "@ethersproject/bytes";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
@@ -23,6 +23,9 @@ export function permitStructHash(values: ERC20PermitValues): string {
         )
     );
 } 
+
+
+
 
 
 /**

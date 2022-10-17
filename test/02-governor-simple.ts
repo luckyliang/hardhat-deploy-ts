@@ -7,11 +7,9 @@ import { loadFixture, mine, mineUpTo } from "@nomicfoundation/hardhat-network-he
 import { assert, expect } from "chai"
 import { increaseTo, latest, latestBlock } from "@nomicfoundation/hardhat-network-helpers/dist/src/helpers/time"
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
-import { moveBlock } from "./util"
-import deployGovernorToken from "../deploy/01-deploy-governorToken"
+import { moveBlock, moveTime } from "./util"
 
-
-describe("Governor Box",async () => {
+describe("Governor",async () => {
     let signers: SignerWithAddress[]
     let governor: GovernorContract
     let governanceToken: GovernanceToken
@@ -157,6 +155,7 @@ describe("Governor Box",async () => {
     it("governor propose success", async () => {
 
         const { governanceTokenContract, timeLockContract, governorContract, boxContract } = await deployContract(MIN_DELAY, [], [], QUORUM_PERCENTAGE, VOTING_PERIOD, VOTING_DELAY, PROPOSAL_THRESHOLD)
+        
         await governanceTokenContract.transfer(signers[1].address, ethers.utils.parseEther("1000"))
         await governanceTokenContract.transfer(signers[2].address, ethers.utils.parseEther("1000"))
         await governanceTokenContract.transfer(signers[3].address, ethers.utils.parseEther("3000"))
@@ -177,7 +176,7 @@ describe("Governor Box",async () => {
                 [boxContract.address],
                 [0],
                 [encodeFunctionCall],
-                PROPOSAL_DESCRIPTION, {from: signers[1].address}
+                PROPOSAL_DESCRIPTION
                 ).then(tx => tx.wait())
         
         const proposalId = await proposeReceipt.events![0].args!.proposalId
@@ -227,6 +226,7 @@ describe("Governor Box",async () => {
         proposalState = await governorContract.state(proposalId)
         console.log(`Current Proposal State: ${proposalState}`);
 
+        //投票结束
         await moveBlock(VOTING_PERIOD + 1)
 
         //结束区块号
@@ -244,13 +244,41 @@ describe("Governor Box",async () => {
         proposalState = await governorContract.state(proposalId)
         console.log(`Current Proposal State: ${proposalState}`);
 
+        //加入执行队列
+        //设置PROPOSER_ROLE角色
+        const propose_role = await timeLockContract.PROPOSER_ROLE()
+        await timeLockContract.grantRole(propose_role, governorContract.address).then(tx => tx.wait())
 
-        // (pastTotalSupply * 3) / 100 <= forVotes + asbtainVotes
+        console.log("queue...")
+        const descriptionHash = ethers.utils.id(PROPOSAL_DESCRIPTION)
 
+        await governorContract.queue(
+            [boxContract.address],
+            [0],
+            [encodeFunctionCall],
+            descriptionHash
+        ).then(tx => tx.wait())
+
+        proposalState = await governorContract.state(proposalId)
+        console.log(`Current Proposal State: ${proposalState}`);
+
+
+        await moveTime(MIN_DELAY)
+
+        proposalState = await governorContract.state(proposalId)
+        console.log(`Current Proposal State: ${proposalState}`);
+
+        console.log("excute...")
+
+        const executorRole = await timeLockContract.EXECUTOR_ROLE()
+        await timeLockContract.grantRole(executorRole, governorContract.address).then(tx => tx.wait())
+        
+        //任何人通过调用governor的execute, 如果需要权限，需要修改对应方法
+        await governorContract.connect(signers[1]).execute(
+            [boxContract.address],
+            [0],
+            [encodeFunctionCall],
+            descriptionHash).then(tx => tx.wait())
     })
-
-
-    
-
 
 })
