@@ -1,9 +1,7 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import WalletConnectQRCodeModal from "@walletconnect/qrcode-modal";
-import { ethers, network, upgrades } from "hardhat";
 import { providers, Signer } from "ethers";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { HttpProvider } from "web3/providers";
+import { artifacts, ethers } from "hardhat";
 
 const provider = new WalletConnectProvider({
   rpc: {
@@ -25,15 +23,12 @@ async function main() {
   const address = await signer.getAddress()
   console.log(address);
   
-  console.log((await web3Provider.getBalance(address)).toString());
-  
-  const Box = await ethers.getContractFactory("Box", signer);
+  const artifact = await artifacts.readArtifact("Box")
+  const Box = new ethers.ContractFactory(artifact.abi, artifact.bytecode, signer)
   
   console.log("Deploying Box ...");
-  // // const box = await upgrades.deployProxy(Box, [42], {initializer: 'store'});
   const box = await Box.deploy()
   await box.deployed()
-
 
   console.log("Box deployed to: ", box.address);
 

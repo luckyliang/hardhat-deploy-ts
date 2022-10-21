@@ -9,14 +9,7 @@ import '@openzeppelin/hardhat-upgrades';
 import "@nomiclabs/hardhat-ethers";
 import fs from "fs";
 import "@walletconnect/web3-provider";
-// //引入环境配置变量
-// dotenv.config({path: ".env"}); //环境加载
 
-// const mainAccount = [process.env.mainDeployer, process.env.mainUser1] as string[]
-// const testAccount = [process.env.testDeployer, process.env.testUser1] as string[]
-
-//从.secret文件中读取账户
-const accounts = fs.readFileSync(".secret").toString().trim().split(",");
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -48,39 +41,13 @@ const config: HardhatUserConfig = {
   },
   defaultNetwork: defaultNetwork,
   networks: { 
-    
     hardhat: {},
     localhost:{
       url: "http://127.0.0.1:8545/",
       chainId: 31337
       //使用本地测试账户：通过npx hardhat node --network hardhat --no-deploy 命令可查看
     },
-    bsc: {
-      url: "https://bsc-dataseed1.binance.org/",
-      chainId: 56,
-      // accounts: accounts,
-      accounts: "remote",
-      timeout: 4000000
-    },
-    bsctest: {
-      url: "https://data-seed-prebsc-1-s3.binance.org:8545/",
-      allowUnlimitedContractSize:true,
-      chainId: 97,
-      // accounts: "remote"
-      accounts: accounts,
-      //live: false, //指定是否是一个线上的链，localhost and hardhat where the default is false
-      //tags: ["bsctest"] //设置网络别名，可通过hre.network.tags获得
-    },
-    ethereum: {
-      url: `https://mainnet.infura.io/v3/${process.env.mainInfuraKey}`,
-      chainId: 1,
-      // accounts:accounts
-    },
-    rinkeby: {
-      url: `https://rinkeby.infura.io/v3/${process.env.testInfuraKey}`,
-      chainId: 4,
-      // accounts: accounts
-    }
+    
   },
   
   gasReporter: {
@@ -88,8 +55,7 @@ const config: HardhatUserConfig = {
     currency: "USD",
   },
   etherscan: {
-    
-    apiKey: "VJ946Q4WM5W4J8NYQUKK7M121HJC5U314D",
+    apiKey: process.env.apiKey || undefined
   },
 };
 
