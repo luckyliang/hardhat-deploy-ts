@@ -60,7 +60,7 @@ async function usingWalletConnect() {
 
 }
 async function usingPrivate() {
-    const web3 = web3WithPrivate("0x38438ec234e28156b9cb031b5b21f5aa492d3676d2ff087aeba433432f33c475")
+    const web3 = web3WithPrivate("")
     // web3.eth.accounts.signTransaction()
     // web3.eth.sendTransaction()
     
