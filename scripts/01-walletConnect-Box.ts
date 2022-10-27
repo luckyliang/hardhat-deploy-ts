@@ -18,6 +18,7 @@ async function main() {
   await box.deployed()
 
   console.log("Box deployed to: ", box.address);
+  
 
 }
 

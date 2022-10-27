@@ -45,7 +45,7 @@ const config: HardhatUserConfig = {
 
 extendEnvironment((hre: HardhatRuntimeEnvironment) => {
   const provider = walletProvider()   
-  console.log(provider);
+  // console.log(provider);
    
   hre.provider = provider
   const web3Provider = new ethers.providers.Web3Provider(provider)

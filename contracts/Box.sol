@@ -1,7 +1,7 @@
 // contracts/Box.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
- 
+ import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 contract Box {
     
     uint256 private value;
