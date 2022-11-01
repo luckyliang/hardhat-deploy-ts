@@ -7,27 +7,15 @@ import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-etherscan";
 import "hardhat-deploy";
 import "solidity-coverage";
+import "hardhat-gas-reporter";
 import fs from  "fs";
 import { utils } from "ethers";
 import { HardhatEthersHelpers } from "@nomiclabs/hardhat-ethers/types";
 
 const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 
-dotenv.config({path: `${__dirname}/.env`}); //load env
 
 const defaultNetwork = "localhost";
-
-function mnemonic() {
-  try {
-    return fs.readFileSync("./mnemonic.txt").toString().trim();
-  } catch (error) {
-    if (defaultNetwork !== "localhost") {
-      console.log(
-        "☢️ WARNING: No mnemonic file created for a deploy account. Try `yarn run generate` and then `yarn run account`."
-      );
-    }
-  }
-}
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -60,54 +48,6 @@ const config: HardhatUserConfig = {
     localhost:{
       url: "http://127.0.0.1:8545/",
     },
-    mainnet: {
-      url: `https://mainnet.infura.io/v3/${process.env.infuraKey}`,
-      accounts: {
-        mnemonic: mnemonic(),
-      },
-    },
-    bsc: {
-      allowUnlimitedContractSize: true,
-      url: "https://bsc-dataseed1.binance.org/",
-      chainId: 56,
-      accounts: {
-        mnemonic: mnemonic()
-      }
-    },
-    bscTestnet: {
-      url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
-      chainId: 97,
-      accounts: {
-        mnemonic: mnemonic()
-      }
-      //live: false, //指定是否是一个线上的链，localhost and hardhat where the default is false
-      //tags: ["bsctest"] //设置网络别名，可通过hre.network.tags获得
-    },
-    rinkeby: {
-      url: `https://rinkeby.infura.io/v3/${process.env.infuraKey}`,
-      accounts: {
-        mnemonic: mnemonic()
-      }
-    },
-    ropsten: {
-      url: `https://ropsten.infura.io/v3//${process.env.infuraKey}`,
-      live: true,
-      accounts:{
-        mnemonic: mnemonic()
-      }
-    },
-  },
-  namedAccounts: {
-    deployer: {
-      default: 0,
-      // 97:0 //chainId: accounts[0], 指定链
-      // 1: 0xA296a3d5F026953e17F472B497eC29a5631FB51B //指定账户
-      //指定网络
-      bscTestnet: 0
-    },
-    user1: {
-      default: 1
-    }
   },
   etherscan: {
     apiKey: {
