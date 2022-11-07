@@ -9,7 +9,6 @@ export const getConnectProvider = () => {
         rpc: {
           56: "https://bsc-dataseed1.binance.org/",
           97: "https://data-seed-prebsc-1-s3.binance.org:8545/",
-          2480: "https://rpc.test.lixb.org/"
         },
         qrcodeModal: WalletConnectQRCodeModal,
     })
