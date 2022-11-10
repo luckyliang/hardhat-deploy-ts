@@ -7,6 +7,7 @@ import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-etherscan";
 import "hardhat-deploy";
 import "solidity-coverage";
+import "hardhat-gas-reporter";
 import fs from  "fs";
 import { utils } from "ethers";
 import { HardhatEthersHelpers } from "@nomiclabs/hardhat-ethers/types";
