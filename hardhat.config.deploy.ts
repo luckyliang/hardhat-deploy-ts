@@ -1,15 +1,15 @@
-import WalletConnectProvider from "@walletconnect/web3-provider";
-import WalletConnectQRCodeModal from "@walletconnect/qrcode-modal";
-import { extendEnvironment, HardhatUserConfig, task, types } from "hardhat/config";
+import * as dotenv from "dotenv";
+
+import { HardhatUserConfig, task, types } from "hardhat/config";
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import '@openzeppelin/hardhat-upgrades';
 import "@nomiclabs/hardhat-ethers";
-import { ethers } from "ethers";
-import { HardhatRuntimeEnvironment } from "hardhat/types";
-import "./type-extensions"
+import "./config-extensions"
+
+dotenv.config({path:"./env"})
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -25,15 +25,30 @@ const config: HardhatUserConfig = {
       },
     ],
   },
-  walletConnectProvider: {
-    rpc: {
-      56: "https://bsc-dataseed1.binance.org/",
-      97: "https://data-seed-prebsc-1-s3.binance.org:8545/",
-      2480: "https://rpc.test.lixb.org/"
+  networks: {
+    bsctest:{
+      url: "https://data-seed-prebsc-1-s3.binance.org:8545/",
+      chainId: 97
     },
-    qrcodeModal: WalletConnectQRCodeModal,
+    bsc:{
+      url: "https://bsc-dataseed1.binance.org/",
+      chainId: 56
+    },
+    mainnet: {
+      url: `https://mainnet.infura.io/v3/${process.env.infuraKey}`,
+      chainId: 1
+    },
+    goerli: {
+      url: `https://goerli.infura.io/v3/${process.env.infuraKey}`,
+      chainId: 5,
+    },
+    sepolia: {
+      url: `https://sepolia.infura.io/v3/${process.env.infuraKey}`,
+      chainId: 11155111,
+    }
+    
   },
-  
+  isWalletConnect: true,
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
     currency: "USD",
@@ -43,86 +58,25 @@ const config: HardhatUserConfig = {
   },
 };
 
-extendEnvironment((hre: HardhatRuntimeEnvironment) => {
-  const provider = walletProvider()   
-  // console.log(provider);
-   
-  hre.provider = provider
-  const web3Provider = new ethers.providers.Web3Provider(provider)
-  hre.signer = web3Provider.getSigner()   
-})
-
 export default config;
 
-const TASK_DEPLOY = 'deploy'
+// const TASK_DEPLOY = 'deploy'
 
-task(TASK_DEPLOY, 'Deploy contracts')
-.addParam(
-    'name',
-    'Smart contract name',
-    undefined,
-    types.string
-  )
-.addOptionalParam(
-    'args',
-    'Deploy Smart contract args',
-    undefined,
-    types.string
-)
-.addFlag('nocompile', 'disable pre compilation')
+// task(TASK_DEPLOY, 'Deploy contracts')
+// .addParam(
+//     'name',
+//     'Smart contract name',
+//     undefined,
+//     types.string
+//   )
+// .addOptionalParam(
+//     'args',
+//     'Deploy Smart contract args',
+//     undefined,
+//     types.string
+// )
+// .addFlag('nocompile', 'disable pre compilation')
 
-.setAction(async (params, hre) => {
+// .setAction(async (params, hre) => {
 
-    if (!params.nocompile) {      
-        await hre.run('compile');
-    }
-
-    let args = new Array();
-    
-    if(params.args === types.string) {
-        args = params.split(',')
-    }
-    // await runDeploy(params.name, params.args)
-
-
-    console.log(`name = ${params.name}, args = ${args} noCompile = ${params.nocompile}`);
-    const artifact = await hre.artifacts.readArtifact(params.name)
-
-    await hre.provider.enable() //等待provider连接
-
-    const factory =  new ethers.ContractFactory(artifact.abi, artifact.bytecode, hre.signer)
-    const instance = await factory.deploy(...args)
-    console.log(`contractAddress = `, instance.address);
-    console.log(`deploy tx Hash = `, instance.deployTransaction.hash);
-    await instance.deployed()    
-})
-
-const walletProvider = () => {
-  const provider =  new WalletConnectProvider(config.walletConnectProvider)
-  provider.on("connect", (error: Error) => {
-    if (error) {
-      console.log(error);
-    }
-  });
-
-  provider.on("accountsChanged", (accounts: string[]) => {
-    console.log(accounts);
-  });
-
-  // Subscribe to chainId change
-  provider.on("chainChanged", (chainId: number) => {
-    console.log(chainId);
-  });
-
-  // Subscribe to session disconnection
-  provider.on("disconnect", (code: number, reason: string) => {
-    console.log(code, reason);
-  });
-
-  return provider
-
- }
-
-
-
-
+// }

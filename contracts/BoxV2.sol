@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 
-contract Box {
+contract BoxV2 {
     
     uint256 private value;
  
@@ -13,7 +13,7 @@ contract Box {
  
     // Stores a new value in the contract
     function store(uint256 newValue) public {
-        value = newValue;
+        value = newValue + 100;
         emit ValueChanged(newValue);
     }
  
