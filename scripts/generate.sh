@@ -22,7 +22,7 @@ npx hardhat run scripts/generate.ts
 
 function read_dir(){
     
-    for file in $(ls $1)       	#注意两个反引号，获取命令执行的结果
+    for file in $(ls $1)
     do
         file_basename=$(basename $file .abi)
         web3j generate solidity -a $1"/"$file -o $JAVA_ABI_PATH -p $JAVA_PACKAGE
