@@ -21,8 +21,6 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 // const defaultNetwork = "bsctest";
-const defaultNetwork = "localhost";
-
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [
@@ -37,7 +35,7 @@ const config: HardhatUserConfig = {
       },
     ],
   },
-  defaultNetwork: defaultNetwork,
+  defaultNetwork: "localhost",
   networks: { 
     localhost:{
       url: "http://127.0.0.1:8545/",
@@ -53,19 +51,18 @@ const config: HardhatUserConfig = {
       chainId: 56
     },
     mainnet: {
-      url: `https://mainnet.infura.io/v3/${process.env.infuraKey}`,
+      url: `https://mainnet.infura.io/v3/${process.env.infuraKey || ""}`,
       chainId: 1
     },
     goerli: {
-      url: `https://goerli.infura.io/v3/${process.env.infuraKey}`,
+      url: `https://goerli.infura.io/v3/${process.env.infuraKey || ""}`,
       chainId: 5,
     },
     sepolia: {
-      url: `https://sepolia.infura.io/v3/${process.env.infuraKey}`,
+      url: `https://sepolia.infura.io/v3/${process.env.infuraKey || ""}`,
       chainId: 11155111,
     },
   },
-  
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
     currency: "USD",

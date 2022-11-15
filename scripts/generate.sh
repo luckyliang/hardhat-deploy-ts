@@ -29,5 +29,4 @@ function read_dir(){
     done
 }   
 
-# 执行命令
 read_dir $ABI_PATH

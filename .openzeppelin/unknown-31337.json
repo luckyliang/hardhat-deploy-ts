@@ -1,20 +1,25 @@
 {
   "manifestVersion": "3.2",
   "admin": {
-    "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-    "txHash": "0x753269523a36d33d9b5f553a947adf6b4a54f59ff531549c5bcfd14bbeb29482"
+    "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+    "txHash": "0x78a1b32507483f041552da4549020e5006b8a2d7121d31136d79eba6387f04c7"
   },
   "proxies": [
     {
-      "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-      "txHash": "0xe122450339cc6b6b2e460bff7bcd21b14fe3d73726d66205f9d6b2689d246056",
+      "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+      "txHash": "0x88b38f88cfc7527e3fe5354d01825bd5ab78c480032a18f40c6150e4dc7918d7",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      "txHash": "0x8c2298349a0257f6b113ba343804cbe0ed4f2a724057bdca09fdb61a3f7c07cb",
       "kind": "transparent"
     }
   ],
   "impls": {
     "240092d8fdacba37edfbdd6e82888d07dd12b2de0e5ab51375ea410d12c7dfcb": {
-      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-      "txHash": "0xac248fc201ee1870874b604a9d239812bc43136b2a6dcc7c74826e3773e43149",
+      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "txHash": "0x8bb3d3e8fc70c553043d0c204031af73c5aa9d75f6619ebc1c18d26aa1fb8a38",
       "layout": {
         "solcVersion": "0.8.10",
         "storage": [
@@ -35,9 +40,9 @@
         }
       }
     },
-    "73ff32e6a1192116673e1fe51003bf418c52f7508469a08b15c4bb96c25c3531": {
-      "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      "txHash": "0x3f7dbbdedb8cfbe9cab9ea812c56441f2d66c06c77498d26536eafa8b124742b",
+    "8d1d29b395b17c1054d9f5871526770b7eac69e9e294b294357c679eb1a41bf1": {
+      "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+      "txHash": "0x82c75b978d7bdf8611e220ee60ecd431b88569a1889bc3a502ddce63c9c69252",
       "layout": {
         "solcVersion": "0.8.10",
         "storage": [
@@ -48,6 +53,14 @@
             "type": "t_uint256",
             "contract": "BoxV2",
             "src": "contracts\\BoxV2.sol:9"
+          },
+          {
+            "label": "fixValue",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256",
+            "contract": "BoxV2",
+            "src": "contracts\\BoxV2.sol:10"
           }
         ],
         "types": {
