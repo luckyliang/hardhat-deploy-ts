@@ -14,3 +14,7 @@ https://learnblockchain.cn/article/4936
 透明代理: https://github.com/OpenZeppelin/openzeppelin-contracts/tree/master/contracts/proxy/transparent
 UUPS: https://github.com/OpenZeppelin/openzeppelin-contracts/tree/master/contracts/proxy/utils
 信标代理：https://github.com/OpenZeppelin/openzeppelin-contracts/tree/master/contracts/proxy/beacon
+
+
+UUPSUpgradeable 漏洞分析
+https://zhuanlan.zhihu.com/p/442101169
