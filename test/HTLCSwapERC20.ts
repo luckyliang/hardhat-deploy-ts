@@ -1,8 +1,9 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { expect } from "chai";
 import { time } from "console";
 import { loadFixture } from "ethereum-waffle";
 import { BigNumberish } from "ethers";
-import { AbiCoder, defaultAbiCoder, Interface } from "ethers/lib/utils";
+import { AbiCoder, defaultAbiCoder, Interface, ParamType } from "ethers/lib/utils";
 import { ethers, upgrades } from "hardhat"
 import { HTLCSwapERC20, TestERC20 } from "../typechain";
 import { newSecretHashPair, nowSeconds, swapId } from "./help";
@@ -55,17 +56,29 @@ describe("HTLCSwapERC20 test", ()  => {
         const {swapERC20, mainERC20, privateERC20} = await loadFixture(deploySwapERC20Fixture)
         
         await mintToken(mainERC20, signers[1].address, senderInitialBalance)
+
+        expect(await mainERC20.balanceOf(signers[1].address)).equal(senderInitialBalance, "mint error")
+
+        await mainERC20.connect(signers[1]).approve(swapERC20.address, senderInitialBalance).then(tx => tx.wait())
+
         await mintToken(privateERC20, signers[2].address, senderInitialBalance)
+        await privateERC20.connect(signers[1]).approve(swapERC20.address, senderInitialBalance).then(tx => tx.wait())
 
         const { secret, secretHash } = newSecretHashPair()
         const timeLock = nowSeconds() + 10 * 60;
         
-        await swapERC20.connect(signers[1]).newSwap(signers[2].address, secretHash, timeLock, mainERC20.address, senderInitialBalance).then(tx => tx.wait())
+        const sid = swapId(signers[1].address, signers[2].address, mainERC20.address, senderInitialBalance, secretHash, timeLock) 
 
-        // await swapERC20.refund()
-        const id = swapId(signers[1].address, signers[2].address, mainERC20.address, senderInitialBalance, secretHash, timeLock)
-        console.log("id = ", id);
+        await expect(swapERC20.connect(signers[1]).newSwap(signers[2].address, secretHash, timeLock, mainERC20.address, senderInitialBalance))
+        .to.emit(swapERC20, "HTLCERC20New").withArgs(sid, signers[1].address, signers[2].address, mainERC20.address, senderInitialBalance, secretHash, timeLock)
         
+        await expect(swapERC20.connect(signers[1]).refund(sid)).to.be.revertedWith("HTLCSwapERC20 refundable: timelock not yet passed")
+
+        expect(await mainERC20.balanceOf(signers[2].address)).equal(0)
+
+        await expect(swapERC20.connect(signers[2]).withdraw(sid, secret)).to.be.emit(swapERC20, "HTLCERC20Withdraw").withArgs(sid)
+
+        expect(await mainERC20.balanceOf(signers[2].address)).equal(senderInitialBalance)
 
     })
 

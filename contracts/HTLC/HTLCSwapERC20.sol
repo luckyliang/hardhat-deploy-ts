@@ -12,10 +12,6 @@ contract HTLCSwapERC20 is Initializable, PausableUpgradeable, OwnableUpgradeable
 
     mapping (bytes32 => LockSwap) public swaps;
 
-    constructor() {
-        _disableInitializers();
-    }
-
     function initialize() public initializer  {
         __Pausable_init();
         __Ownable_init();
