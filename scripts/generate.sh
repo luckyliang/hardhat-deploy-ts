@@ -26,6 +26,7 @@ function read_dir(){
     do
         file_basename=$(basename $file .abi)
         web3j generate solidity -a $1"/"$file -o $JAVA_ABI_PATH -p $JAVA_PACKAGE
+        abigen --abi=$1"/"$file --pkg=abi --out=$GO_ABI_PATH"/"$file_basename.go
     done
 }   
 
