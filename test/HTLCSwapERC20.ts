@@ -61,9 +61,6 @@ describe("HTLCSwapERC20 test", ()  => {
 
         await mainERC20.connect(signers[1]).approve(swapERC20.address, senderInitialBalance).then(tx => tx.wait())
 
-        await mintToken(privateERC20, signers[2].address, senderInitialBalance)
-        await privateERC20.connect(signers[1]).approve(swapERC20.address, senderInitialBalance).then(tx => tx.wait())
-
         const { secret, secretHash } = newSecretHashPair()
         const timeLock = nowSeconds() + 10 * 60;
         

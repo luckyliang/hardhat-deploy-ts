@@ -6,11 +6,14 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-
+import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
 
 contract HTLCSwapERC20 is Initializable, PausableUpgradeable, OwnableUpgradeable, UUPSUpgradeable {
 
     mapping (bytes32 => LockSwap) public swaps;
+
+    using EnumerableSetUpgradeable for EnumerableSetUpgradeable.Bytes32Set;
+    EnumerableSetUpgradeable.Bytes32Set internal swapIds;
 
     function initialize() public initializer  {
         __Pausable_init();
@@ -57,40 +60,19 @@ contract HTLCSwapERC20 is Initializable, PausableUpgradeable, OwnableUpgradeable
         bytes32 preimage;
     }
 
-    // modifier tokensTransferable(address _token, address _sender, uint256 _amount) {
-    //     require(_amount > 0, "HTLCSwapERC20: token amount must be > 0");
-    //     require(
-    //         IERC20Upgradeable(_token).allowance(_sender, address(this)) >= _amount,
-    //         "HTLCSwapERC20: token allowance must be >= amount"
-    //     );
-    //     _;
-    // }
-
-    //TODO 需不需要设置最小时间
-    modifier futureTimelock(uint256 _time) {
-        require(_time > block.timestamp, "HTLCSwapERC20: timelock time must be in the future");
-        _;
-    }
 
     modifier swapExists(bytes32 _swapId) {
-        require(haveSwap(_swapId), "HTLCSwapERC20: swapId does not exist");
+        require(swapIds.contains(_swapId), "HTLCSwapERC20: swapId does not exist");
         _;
     }
 
-    //验证密码是否正确
-    modifier hashlockMatches(bytes32 _swapId, bytes32 _x) {
-        require(
-            swaps[_swapId].hashlock == keccak256(abi.encodePacked(_x)),
-            "HTLCSwapERC20: hashlock hash does not match"
-        );
-        _;
-    }
     modifier withdrawable(bytes32 _swapId) {
         require(swaps[_swapId].receiver == msg.sender, "HTLCSwapERC20 withdrawable: not receiver");
         require(swaps[_swapId].withdrawn == false, "HTLCSwapERC20 withdrawable: already withdrawn");
         require(swaps[_swapId].refunded == false, "HTLCSwapERC20 withdrawable: already refunded");
         _;
     }
+
     modifier refundable(bytes32 _swapId) {
         require(swaps[_swapId].sender == msg.sender, "HTLCSwapERC20 refundable: not sender");
         require(swaps[_swapId].refunded == false, "HTLCSwapERC20 refundable: already refunded");
@@ -108,11 +90,10 @@ contract HTLCSwapERC20 is Initializable, PausableUpgradeable, OwnableUpgradeable
         uint256 _amount
     )
         external
-        futureTimelock(_timelock)
         whenNotPaused
         returns (bytes32 swapId)
     {
-
+        require(_timelock > block.timestamp, "HTLCSwapERC20: timelock time must be in the future");
         require(_amount > 0, "HTLCSwapERC20: token amount must be > 0");
 
         swapId = keccak256(
@@ -126,8 +107,8 @@ contract HTLCSwapERC20 is Initializable, PausableUpgradeable, OwnableUpgradeable
             )
         );
 
-        require(!haveSwap(swapId), "HTLCSwapERC20: swapId already exists");
-
+        require(swapIds.add(swapId), "HTLCSwapERC20: swapId already exists");
+        
         // TODU: 代币是转到指定账户，还是放在合约上
         IERC20Upgradeable(_tokenERC20).transferFrom(msg.sender, address(this), _amount);
 
@@ -154,18 +135,15 @@ contract HTLCSwapERC20 is Initializable, PausableUpgradeable, OwnableUpgradeable
         );
     }
 
-    function haveSwap(bytes32 _swapId) public view returns (bool) {
-        return swaps[_swapId].sender != address(0);
-    }
-
     
     function withdraw(bytes32 _swapId, bytes32 _preimage)
         external
         swapExists(_swapId)
-        hashlockMatches(_swapId, _preimage)
         withdrawable(_swapId)
         returns (bool)
     {
+        require(swaps[_swapId].hashlock == keccak256(abi.encodePacked(_preimage)), "HTLCSwapERC20: hashlock hash does not match");
+
         LockSwap storage c = swaps[_swapId];
         c.preimage = _preimage;
         c.withdrawn = true;
@@ -190,4 +168,11 @@ contract HTLCSwapERC20 is Initializable, PausableUpgradeable, OwnableUpgradeable
         return true;
     }
 
+    function swapIdsCount() public view returns (uint256) {
+        return swapIds.length();
+    }
+
+    function swapIdAtIndex(uint256 index) public view returns (bytes32) {
+        return swapIds.at(index);
+    }
 }
