@@ -1,7 +1,7 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { assert, expect } from "chai";
 import { BigNumberish, TypedDataDomain } from "ethers";
-import { deployments, ethers } from "hardhat";
+import {  ethers } from "hardhat";
 import { TestERC20Permit } from "../typechain-types"
 import { signatureWithTypeDataHash, verifySignature } from "../utils/eip712";
 import { erc20PermitSignWithSinger, erc20PermitTypes, ERC20PermitValues } from "../utils/erc20Permit";
@@ -39,8 +39,9 @@ describe("ERC20Permit 712 signature", async () => {
     }
 
     beforeEach(async () => {
-        await deployments.fixture("erc20Permit")
-        erc20Permit = await ethers.getContract<TestERC20Permit>("TestERC20Permit")
+        const TestERC20Permit = await ethers.getContractFactory("TestERC20Permit")
+
+        erc20Permit = await  TestERC20Permit.deploy() as TestERC20Permit
         signers = await ethers.getSigners()
     })
 

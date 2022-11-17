@@ -1,9 +1,10 @@
+import { verify } from "crypto";
 import { BigNumberish } from "ethers";
-import { defaultAbiCoder, keccak256, toUtf8Bytes } from "ethers/lib/utils";
+import { defaultAbiCoder, keccak256, toUtf8Bytes, verifyMessage } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 import { domainSeparatorV4, signWithPrivateKey, toTypedDataHash, TYPE_HASH } from "../utils/eip712";
 
-const getTypeDataHash =async (owner: string, tokenId: BigNumberish): Promise<string> => {
+const getTypeDataHash = async (owner: string, tokenId: BigNumberish): Promise<string> => {
     const signer = await ethers.getSigner(owner)
     const domainSeparator = domainSeparatorV4(TYPE_HASH, "exchange", "1", "0x5FbDB2315678afecb367f032d93F642f64180aa3", await signer.getChainId())
     const type_hash = keccak256(toUtf8Bytes("order(address owner, uint256 tokenId)"))
@@ -18,8 +19,7 @@ const getTypeDataHash =async (owner: string, tokenId: BigNumberish): Promise<str
     return typeDataHash;
 }
 
-
-async function main() {
+async function sigTypeData_V4() {
     const signers = await ethers.getSigners()
 
     const owenr = signers[0].address
@@ -38,9 +38,30 @@ async function main() {
     // 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
     
     // const signatureStr =  signatureWithTypeDataHash(sigTypeData).compacts
+    //hardhat 网络内置私钥
     const signatureLike = signWithPrivateKey("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80", typedatahash)
-    console.log("signatureLike = ", signatureLike);
+    console.log("signatureLike = ", signatureLike)  
+}
+
+async function personal_sign() {
+    const signers = await ethers.getSigners()
+    const signer = signers[0];
+    const owenr = signer.address
+    console.log("owner = ", owenr)
+
+    const signstr = await signer.signMessage("hello dapp")
+    console.log("signstr = ", signstr);
+
+    //验证签名
+    const verifyAddress = verifyMessage("hello dapp", signstr)
+    console.log("verifyAddress = ", verifyAddress);
     
+}
+
+
+async function main() {
+   
+   personal_sign()
     
 }
 

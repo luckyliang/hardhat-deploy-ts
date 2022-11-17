@@ -54,62 +54,12 @@ const config: HardhatUserConfig = {
   },
   defaultNetwork,
   networks: { 
-    hardhat:{
-      
-    },
     localhost:{
       url: "http://127.0.0.1:8545/",
       chainId: 31337
     },
-    mainnet: {
-      url: `https://mainnet.infura.io/v3/${process.env.infuraKey}`,
-      accounts: {
-        mnemonic: mnemonic(),
-      },
-    },
-    bsc: {
-      allowUnlimitedContractSize: true,
-      url: "https://bsc-dataseed1.binance.org/",
-      chainId: 56,
-      accounts: {
-        mnemonic: mnemonic()
-      }
-    },
-    bscTestnet: {
-      url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
-      chainId: 97,
-      accounts: {
-        mnemonic: mnemonic()
-      }
-      //live: false, //指定是否是一个线上的链，localhost and hardhat where the default is false
-      //tags: ["bsctest"] //设置网络别名，可通过hre.network.tags获得
-    },
-    rinkeby: {
-      url: `https://rinkeby.infura.io/v3/${process.env.infuraKey}`,
-      accounts: {
-        mnemonic: mnemonic()
-      }
-    },
-    ropsten: {
-      url: `https://ropsten.infura.io/v3//${process.env.infuraKey}`,
-      live: true,
-      accounts:{
-        mnemonic: mnemonic()
-      }
-    },
   },
-  namedAccounts: {
-    deployer: {
-      default: 0,
-      // 97:0 //chainId: accounts[0], 指定链
-      // 1: 0xA296a3d5F026953e17F472B497eC29a5631FB51B //指定账户
-      //指定网络
-      bscTestnet: 0
-    },
-    user1: {
-      default: 1
-    }
-  },
+  
   etherscan: {
     apiKey: {
       bsc: process.env.bscApiKey as string,
@@ -118,10 +68,7 @@ const config: HardhatUserConfig = {
       ropsten: process.env.infuraKey as string
     }
   },
-  gasReporter: {
-    enabled: true,
-    currency: 'USD'
-  }
+
 };
 
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
