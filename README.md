@@ -7,6 +7,7 @@ yarn test test/01-Box.ts
 yarn deploy --name Box
 
 ## 可升级合约
+Openzeppelin的三种代理模式分析：
 https://learnblockchain.cn/article/4936
 
 有三种代理模式：
