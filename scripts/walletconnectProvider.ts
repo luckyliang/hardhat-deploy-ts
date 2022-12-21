@@ -9,8 +9,15 @@ export const getConnectProvider = () => {
         rpc: {
           56: "https://bsc-dataseed1.binance.org/",
           97: "https://data-seed-prebsc-1-s3.binance.org:8545/",
+          2888: "https://test.lixb.io"
         },
         qrcodeModal: WalletConnectQRCodeModal,
+        clientMeta: {
+          description: "Smart constract Migration",
+          url: "https://github.com/hurry-sea/ss-contract",
+          icons: ["https://sevensea.s3.ap-southeast-1.amazonaws.com/sevensea/hideoutWallet/token/ETH_2.svg"],
+          name: "Migration"
+      }
     })
 
     provider.on("connect", (error: Error) => {

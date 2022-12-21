@@ -4,6 +4,7 @@ import { Contract } from "web3-eth-contract";
 import { Artifact } from "hardhat/types";
 import { Transaction } from "@ethereumjs/tx";
 import inquirer from "inquirer";
+import { web3Connect } from "./walletconnectProvider";
 
 
 
@@ -18,10 +19,13 @@ async function deploy(web3: Web3, artifact: Artifact, account: string, args: any
     const gas = await contractSendMethod.estimateGas()
     const result = await contractSendMethod.send({
         from: account,
-        gasPrice: web3.utils.toWei("20","Gwei"),
-        gas: gas
+        // gasPrice: web3.utils.toWei("20","Gwei"),
+        // gas: gas
+        gas: 0xFFFFFF, 
+        gasPrice: "30000000000"
     })
-
+    console.log("deploy success");
+    
     //0x3075E6C72Bb1af7aA80a1BA18789920B2bfC0327
     return result.options.address
 }
@@ -50,15 +54,16 @@ async function retrieve(web3: Web3, address: string, artifact: Artifact, account
 const contractAddress = "0x3075E6C72Bb1af7aA80a1BA18789920B2bfC0327"
 
 async function usingWalletConnect() {
-
-    const web3 = new Web3("https://data-seed-prebsc-1-s3.binance.org:8545/")
+    const web3 = await web3Connect()
+    // const web3 = new Web3("https://test.lixb.io/")
     const accounts = await web3.eth.getAccounts()
     const artifact = artifacts.readArtifactSync("Box")
     
-    // const addrsss = await deploy(web3, artifact, accounts[0], [])
-
+    const address = await deploy(web3, artifact, accounts[0], [])
+    console.log(address);
+    
     // await store(web3, addrsss, artifact, accounts[0], web3.utils.toWei("2000", "ether"))
-    await retrieve(web3, contractAddress, artifact, accounts[0])
+    // await retrieve(web3, contractAddress, artifact, accounts[0])
 
 }
 
@@ -114,8 +119,8 @@ async function usingPrivate() {
 }
 
 async function main() {
-    await usingPrivate()
-    // await usingWalletConnect()
+    // await usingPrivate()
+    await usingWalletConnect()
 }
 
 
