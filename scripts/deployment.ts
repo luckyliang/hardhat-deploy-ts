@@ -12,15 +12,13 @@ const configPath = `./deployments/config.json`
 
 export const write_config =  (chainId: number, contractName: string, address: string) => {
 
-    let config: ConfigInterface
-    if(!fs.existsSync(configPath)) {
-        let configStr = `{"${chainId}": {"${contractName}": "${address}"}}`
-        config = JSON.parse(configStr)
-    }else {
-        config = readJSONFile<ConfigInterface>(configPath, 'utf-8')
-        config[chainId][contractName] = address
-    }
-    writeFileSyncToFile(configPath, config, 'utf-8')
+    let content =  fs.readFileSync(configPath, 'utf-8');
+    let contracts = JSON.parse(content);
+
+    contracts[chainId] = contracts[chainId] || {};
+    contracts[chainId][contractName] = address;
+
+    fs.writeFileSync(configPath, JSON.stringify(contracts));
 }
 
 export const read_config = (): ConfigInterface => {

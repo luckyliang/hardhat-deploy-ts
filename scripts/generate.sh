@@ -11,7 +11,7 @@ JS_ABI_PATH="build/generate/src/js"
 GO_ABI_PATH="build/generate/src/go"
 JAVA_ABI_PATH="build/generate/src/java"
 
-JAVA_PACKAGE="com.sevensea.contract.abi"
+JAVA_PACKAGE="com.contract.abi"
 
 mkdir -p $ABI_PATH
 mkdir -p $JS_ABI_PATH
@@ -26,7 +26,7 @@ function read_dir(){
     do
         file_basename=$(basename $file .abi)
         web3j generate solidity -a $1"/"$file -o $JAVA_ABI_PATH -p $JAVA_PACKAGE
-        abigen --abi=$1"/"$file --pkg=abi --out=$GO_ABI_PATH"/"$file_basename.go
+        abigen --abi=$1"/"$file --pkg=$file_basename --out=$GO_ABI_PATH"/"$file_basename.go
     done
 }   
 
