@@ -17,6 +17,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC20__factory>;
     getContractFactory(
+      name: "IERC20Permit",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC20Permit__factory>;
+    getContractFactory(
       name: "IERC20Metadata",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20Metadata__factory>;
@@ -25,15 +29,232 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
     getContractFactory(
-      name: "TestERC20",
+      name: "ERC721",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.TestERC20__factory>;
+    ): Promise<Contracts.ERC721__factory>;
+    getContractFactory(
+      name: "IERC721Enumerable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC721Enumerable__factory>;
+    getContractFactory(
+      name: "IERC721Metadata",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC721Metadata__factory>;
+    getContractFactory(
+      name: "IERC721",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC721__factory>;
+    getContractFactory(
+      name: "IERC721Receiver",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC721Receiver__factory>;
+    getContractFactory(
+      name: "ERC721Holder",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC721Holder__factory>;
+    getContractFactory(
+      name: "ERC165",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC165__factory>;
+    getContractFactory(
+      name: "IERC165",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC165__factory>;
+    getContractFactory(
+      name: "ConsumableAdapterV1",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ConsumableAdapterV1__factory>;
+    getContractFactory(
+      name: "DecentralandFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DecentralandFacet__factory>;
+    getContractFactory(
+      name: "DiamondCutFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DiamondCutFacet__factory>;
+    getContractFactory(
+      name: "DiamondLoupeFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DiamondLoupeFacet__factory>;
+    getContractFactory(
+      name: "ERC721Facet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC721Facet__factory>;
+    getContractFactory(
+      name: "ERC721OldHolder",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC721OldHolder__factory>;
+    getContractFactory(
+      name: "FeeFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.FeeFacet__factory>;
+    getContractFactory(
+      name: "MarketplaceFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MarketplaceFacet__factory>;
+    getContractFactory(
+      name: "MetaverseAdditionFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MetaverseAdditionFacet__factory>;
+    getContractFactory(
+      name: "MetaverseConsumableAdapterFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MetaverseConsumableAdapterFacet__factory>;
+    getContractFactory(
+      name: "OwnershipFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.OwnershipFacet__factory>;
+    getContractFactory(
+      name: "ReferralFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ReferralFacet__factory>;
+    getContractFactory(
+      name: "RentFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.RentFacet__factory>;
+    getContractFactory(
+      name: "ILandWorks",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ILandWorks__factory>;
+    getContractFactory(
+      name: "IDecentralandFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IDecentralandFacet__factory>;
+    getContractFactory(
+      name: "IDecentralandRegistry",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IDecentralandRegistry__factory>;
+    getContractFactory(
+      name: "IDiamondCut",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IDiamondCut__factory>;
+    getContractFactory(
+      name: "IDiamondLoupe",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IDiamondLoupe__factory>;
+    getContractFactory(
+      name: "IERC173",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC173__factory>;
+    getContractFactory(
+      name: "IERC721Consumable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC721Consumable__factory>;
+    getContractFactory(
+      name: "IERC721Facet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC721Facet__factory>;
+    getContractFactory(
+      name: "IERC721OldReceiver",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC721OldReceiver__factory>;
+    getContractFactory(
+      name: "IFeeFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IFeeFacet__factory>;
+    getContractFactory(
+      name: "IMarketplaceFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IMarketplaceFacet__factory>;
+    getContractFactory(
+      name: "IMetaverseAdditionFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IMetaverseAdditionFacet__factory>;
+    getContractFactory(
+      name: "IMetaverseConsumableAdapterFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IMetaverseConsumableAdapterFacet__factory>;
+    getContractFactory(
+      name: "IReferralFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IReferralFacet__factory>;
+    getContractFactory(
+      name: "IRentable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IRentable__factory>;
+    getContractFactory(
+      name: "IRentFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IRentFacet__factory>;
+    getContractFactory(
+      name: "IRentPayout",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IRentPayout__factory>;
+    getContractFactory(
+      name: "LandWorks",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.LandWorks__factory>;
+    getContractFactory(
+      name: "LibDiamond",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.LibDiamond__factory>;
+    getContractFactory(
+      name: "LibERC721",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.LibERC721__factory>;
+    getContractFactory(
+      name: "LibFee",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.LibFee__factory>;
+    getContractFactory(
+      name: "LibOwnership",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.LibOwnership__factory>;
+    getContractFactory(
+      name: "LibList",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.LibList__factory>;
+    getContractFactory(
+      name: "LibRent",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.LibRent__factory>;
+    getContractFactory(
+      name: "Test1Facet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Test1Facet__factory>;
+    getContractFactory(
+      name: "Test2Facet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Test2Facet__factory>;
+    getContractFactory(
+      name: "ERC20Mock",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20Mock__factory>;
+    getContractFactory(
+      name: "ERC721Consumable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC721Consumable__factory>;
+    getContractFactory(
+      name: "ERC721Mock",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC721Mock__factory>;
+    getContractFactory(
+      name: "ERC721OldMock",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC721OldMock__factory>;
+    getContractFactory(
+      name: "ERC721ReceiverMock",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC721ReceiverMock__factory>;
+    getContractFactory(
+      name: "ERC721WithSetUpdateOperatorMock",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC721WithSetUpdateOperatorMock__factory>;
+    getContractFactory(
+      name: "RentPayout",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.RentPayout__factory>;
 
     getContractAt(
       name: "ERC20",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC20>;
+    getContractAt(
+      name: "IERC20Permit",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC20Permit>;
     getContractAt(
       name: "IERC20Metadata",
       address: string,
@@ -45,10 +266,275 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20>;
     getContractAt(
-      name: "TestERC20",
+      name: "ERC721",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.TestERC20>;
+    ): Promise<Contracts.ERC721>;
+    getContractAt(
+      name: "IERC721Enumerable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC721Enumerable>;
+    getContractAt(
+      name: "IERC721Metadata",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC721Metadata>;
+    getContractAt(
+      name: "IERC721",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC721>;
+    getContractAt(
+      name: "IERC721Receiver",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC721Receiver>;
+    getContractAt(
+      name: "ERC721Holder",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC721Holder>;
+    getContractAt(
+      name: "ERC165",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC165>;
+    getContractAt(
+      name: "IERC165",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC165>;
+    getContractAt(
+      name: "ConsumableAdapterV1",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ConsumableAdapterV1>;
+    getContractAt(
+      name: "DecentralandFacet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DecentralandFacet>;
+    getContractAt(
+      name: "DiamondCutFacet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DiamondCutFacet>;
+    getContractAt(
+      name: "DiamondLoupeFacet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DiamondLoupeFacet>;
+    getContractAt(
+      name: "ERC721Facet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC721Facet>;
+    getContractAt(
+      name: "ERC721OldHolder",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC721OldHolder>;
+    getContractAt(
+      name: "FeeFacet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.FeeFacet>;
+    getContractAt(
+      name: "MarketplaceFacet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MarketplaceFacet>;
+    getContractAt(
+      name: "MetaverseAdditionFacet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MetaverseAdditionFacet>;
+    getContractAt(
+      name: "MetaverseConsumableAdapterFacet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MetaverseConsumableAdapterFacet>;
+    getContractAt(
+      name: "OwnershipFacet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.OwnershipFacet>;
+    getContractAt(
+      name: "ReferralFacet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ReferralFacet>;
+    getContractAt(
+      name: "RentFacet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.RentFacet>;
+    getContractAt(
+      name: "ILandWorks",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ILandWorks>;
+    getContractAt(
+      name: "IDecentralandFacet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IDecentralandFacet>;
+    getContractAt(
+      name: "IDecentralandRegistry",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IDecentralandRegistry>;
+    getContractAt(
+      name: "IDiamondCut",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IDiamondCut>;
+    getContractAt(
+      name: "IDiamondLoupe",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IDiamondLoupe>;
+    getContractAt(
+      name: "IERC173",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC173>;
+    getContractAt(
+      name: "IERC721Consumable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC721Consumable>;
+    getContractAt(
+      name: "IERC721Facet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC721Facet>;
+    getContractAt(
+      name: "IERC721OldReceiver",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC721OldReceiver>;
+    getContractAt(
+      name: "IFeeFacet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IFeeFacet>;
+    getContractAt(
+      name: "IMarketplaceFacet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IMarketplaceFacet>;
+    getContractAt(
+      name: "IMetaverseAdditionFacet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IMetaverseAdditionFacet>;
+    getContractAt(
+      name: "IMetaverseConsumableAdapterFacet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IMetaverseConsumableAdapterFacet>;
+    getContractAt(
+      name: "IReferralFacet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IReferralFacet>;
+    getContractAt(
+      name: "IRentable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IRentable>;
+    getContractAt(
+      name: "IRentFacet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IRentFacet>;
+    getContractAt(
+      name: "IRentPayout",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IRentPayout>;
+    getContractAt(
+      name: "LandWorks",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.LandWorks>;
+    getContractAt(
+      name: "LibDiamond",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.LibDiamond>;
+    getContractAt(
+      name: "LibERC721",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.LibERC721>;
+    getContractAt(
+      name: "LibFee",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.LibFee>;
+    getContractAt(
+      name: "LibOwnership",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.LibOwnership>;
+    getContractAt(
+      name: "LibList",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.LibList>;
+    getContractAt(
+      name: "LibRent",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.LibRent>;
+    getContractAt(
+      name: "Test1Facet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Test1Facet>;
+    getContractAt(
+      name: "Test2Facet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Test2Facet>;
+    getContractAt(
+      name: "ERC20Mock",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20Mock>;
+    getContractAt(
+      name: "ERC721Consumable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC721Consumable>;
+    getContractAt(
+      name: "ERC721Mock",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC721Mock>;
+    getContractAt(
+      name: "ERC721OldMock",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC721OldMock>;
+    getContractAt(
+      name: "ERC721ReceiverMock",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC721ReceiverMock>;
+    getContractAt(
+      name: "ERC721WithSetUpdateOperatorMock",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC721WithSetUpdateOperatorMock>;
+    getContractAt(
+      name: "RentPayout",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.RentPayout>;
 
     // default types
     getContractFactory(
