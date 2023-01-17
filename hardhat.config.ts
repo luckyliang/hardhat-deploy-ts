@@ -4,6 +4,7 @@ import "@nomicfoundation/hardhat-toolbox";
 import "@nomiclabs/hardhat-etherscan";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
+import "hardhat-abi-exporter";
 import '@openzeppelin/hardhat-upgrades';
 import "@nomiclabs/hardhat-ethers";
 import fs from "fs";
@@ -60,17 +61,20 @@ const config: HardhatUserConfig = {
     },
     bsctest:{
       url: "https://data-seed-prebsc-1-s3.binance.org:8545/",
+      
       chainId: 97,
       accounts: accounts()
 
     },
     mainnet: {
-      url: "https://mainnet.infura.io/v3/92983deb8689407bb1736bdf82bf9c9c",
+      // url: "https://mainnet.infura.io/v3/92983deb8689407bb1736bdf82bf9c9c",
+      url: "https://eth-mainnet.nodereal.io/v1/723149ecfcdc444489250b4436b210bf",
       chainId: 1,
       accounts: accounts()
     },
     goerli: {
-      url: "https://goerli.infura.io/v3/92983deb8689407bb1736bdf82bf9c9c",
+      // url: "https://goerli.infura.io/v3/92983deb8689407bb1736bdf82bf9c9c",
+      url: "https://eth-mainnet.nodereal.io/v1/723149ecfcdc444489250b4436b210bf",
       chainId: 5,
       accounts: accounts()
     }
@@ -79,6 +83,14 @@ const config: HardhatUserConfig = {
     // enabled: process.env.REPORT_GAS !== undefined,
     enabled: true,
     currency: "USD",
+  },
+  abiExporter: {
+    path: './build/generate/json',
+    only:["TestERC20"],
+    except: ['.*Mock$'],
+    clear: true,
+    flat: true,
+    runOnCompile: true
   },
   etherscan: {
     apiKey: process.env.apiKey || undefined
