@@ -10,21 +10,21 @@ library LibMarketplace {
         keccak256("com.enterdao.landworks.marketplace");
 
     enum AssetStatus {
-        Listed,
-        Delisted
+        Listed,     //上市
+        Delisted    //下架、摘牌
     }
 
     struct Asset {
-        uint256 metaverseId;
-        address metaverseRegistry;
-        uint256 metaverseAssetId;
-        address paymentToken;
-        uint256 minPeriod;
-        uint256 maxPeriod;
-        uint256 maxFutureTime;
-        uint256 pricePerSecond;
-        uint256 totalRents;
-        AssetStatus status;
+        uint256 metaverseId;            //元宇宙id
+        address metaverseRegistry;      //Token合约地址
+        uint256 metaverseAssetId;       //tokenId
+        address paymentToken;           //支付token合约地址
+        uint256 minPeriod;              //最小租用周期
+        uint256 maxPeriod;              //最大租用周期
+        uint256 maxFutureTime;          //最大有效期
+        uint256 pricePerSecond;         //每秒租用价格
+        uint256 totalRents;             //总租金
+        AssetStatus status;             //资产状态
     }
 
     struct Rent {
@@ -43,7 +43,7 @@ library LibMarketplace {
     struct MarketplaceStorage {
         // Supported metaverse registries
         mapping(uint256 => MetaverseRegistry) metaverseRegistries;
-        // Assets by ID
+        // Assets by ID 资产ID （tokenIds）
         mapping(uint256 => Asset) assets;
         // Rents by asset ID
         mapping(uint256 => mapping(uint256 => Rent)) rents;
@@ -73,7 +73,10 @@ library LibMarketplace {
     {
         return marketplaceStorage().metaverseRegistries[_metaverseId].name;
     }
-
+    /// @dev 设置注册或删除，当_statu为false时删除
+    /// @param _metaverseId 元宇宙id
+    /// @param _registry 登记地址
+    /// @param _status 状态
     function setRegistry(
         uint256 _metaverseId,
         address _registry,
@@ -88,6 +91,7 @@ library LibMarketplace {
         }
     }
 
+    //该地址是否登记
     function supportsRegistry(uint256 _metaverseId, address _registry)
         internal
         view
@@ -100,6 +104,7 @@ library LibMarketplace {
                 .contains(_registry);
     }
 
+    //所有登记数量
     function totalRegistries(uint256 _metaverseId)
         internal
         view
@@ -112,6 +117,7 @@ library LibMarketplace {
                 .length();
     }
 
+    //根据id和下标获取登记地址
     function registryAt(uint256 _metaverseId, uint256 _index)
         internal
         view

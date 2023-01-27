@@ -27,17 +27,18 @@ contract MarketplaceFacet is IMarketplaceFacet, ERC721Holder, RentPayout {
     /// listers will not receive additional rewards.
     /// See {IReferralFacet-setMetaverseRegistryReferrers}, {IReferralFacet-setReferrers}.
     /// @param _metaverseId The id of the metaverse
-    /// @param _metaverseRegistry The registry of the metaverse
-    /// @param _metaverseAssetId The id from the metaverse registry
-    /// @param _minPeriod The minimum number of time (in seconds) the asset can be rented
-    /// @param _maxPeriod The maximum number of time (in seconds) the asset can be rented
+    /// @param _metaverseRegistry The registry of the metaverse ERC721合约地址
+    /// @param _metaverseAssetId The id from the metaverse registry  TokenID
+    /// @param _minPeriod The minimum number of time (in seconds) the asset can be rented 最小出租时间
+    /// @param _maxPeriod The maximum number of time (in seconds) the asset can be rented 最大出租时间
     /// @param _maxFutureTime The timestamp delta after which the protocol will not allow
-    /// the asset to be rented at an any given moment.
-    /// @param _paymentToken The token which will be accepted as a form of payment.
+    /// the asset to be rented at an any given moment. 过期时间，超过改时间将不再出租（类似订单有效期）
+    /// @param _paymentToken Tnhe toke which will be accepted as a form of payment. 
     /// Provide 0x0000000000000000000000000000000000000001 for ETH.
-    /// @param _pricePerSecond The price for rental per second
-    /// @param _referrer The target referrer
-    /// @return The newly created asset id.
+    /// 支付token合约地址，0x0000000000000000000000000000000000000001为主网代币
+    /// @param _pricePerSecond The price for rental per second 每秒的租用价格
+    /// @param _referrer The target referrer 目标推荐人？
+    /// @return The newly created asset id. 新的资产id
     function list(
         uint256 _metaverseId,
         address _metaverseRegistry,

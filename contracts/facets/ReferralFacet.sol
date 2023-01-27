@@ -7,6 +7,7 @@ import "../libraries/LibReferral.sol";
 import "../libraries/LibTransfer.sol";
 import "../libraries/LibFee.sol";
 
+//推荐人奖励
 contract ReferralFacet is IReferralFacet {
     /// @notice Sets a referral admin
     /// Manages the addition/removal of referrers.
@@ -30,10 +31,11 @@ contract ReferralFacet is IReferralFacet {
     /// @param _metaverseRegistries The target metaverse registries
     /// @param _referrers The to-be-set referrers for the metaverse registries
     /// @param _percentages The to-be-set referrer percentages for the metaverse registries
-    function setMetaverseRegistryReferrers(
-        address[] memory _metaverseRegistries,
-        address[] memory _referrers,
-        uint24[] memory _percentages
+    /// 必须是合约拥有者或者admin管理员才能设置
+    function setMetaverseRegistryReferrers(//设置元宇宙NFT合约推荐者
+        address[] memory _metaverseRegistries,  //目标NFT合约地址
+        address[] memory _referrers,            //推荐人
+        uint24[] memory _percentages            //百分比，_percentage <= 100_000
     ) external {
         LibReferral.ReferralStorage storage rs = LibReferral.referralStorage();
         require(
@@ -48,11 +50,13 @@ contract ReferralFacet is IReferralFacet {
                 "_metaverseRegistry cannot be 0x0"
             );
             require(_referrers[i] != address(0), "_referrer cannot be 0x0");
+            //不能为100%
             require(
                 _percentages[i] <= LibFee.FEE_PRECISION,
                 "_percentage cannot exceed 100"
             );
 
+            //储存元宇宙推荐人及百分比
             rs.metaverseRegistryReferrers[_metaverseRegistries[i]] = LibReferral
                 .MetaverseRegistryReferrer({
                     referrer: _referrers[i],
@@ -87,7 +91,7 @@ contract ReferralFacet is IReferralFacet {
     /// @param _referrers The to-be-set referrers
     /// @param _mainPercentages The to-be-set main percentages for referrers
     /// @param _secondaryPercentages The to-be-set secondary percentages for referrers
-    function setReferrers(
+    function setReferrers( //设置推荐者
         address[] memory _referrers,
         uint24[] memory _mainPercentages,
         uint24[] memory _secondaryPercentages

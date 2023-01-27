@@ -108,15 +108,44 @@ function diamondStorage() internal pure returns (DiamondStorage storage ds)
 
  主要处理钻石刻面的增、删、改。内部根据FacetCut.FacetCutAction枚举的只进行相关的操作
 
-```solidity
+**入口函数**
 
-//_diamondCut：s
+```solidity
 function diamondCut(
         IDiamondCut.FacetCut[] memory _diamondCut,
         address _init,
         bytes memory _calldata
     ) internal
 ```
+
+**添加方法**，
+
+`_facetAddress != address(0) && oldFacetAddress == address(0`
+
+```solidity
+function addFunctions(address _facetAddress, bytes4[] memory _functionSelectors) internal 
+```
+
+**替换**
+
+使用新的合约地址，相同函数签名即可替换
+
+`_facetAddress != address(0) && oldFacetAddress != _facetAddress`
+
+```
+    function replaceFunctions(address _facetAddress, bytes4[] memory _functionSelectors) internal
+
+```
+
+删除
+
+`_facetAddress = address(0) && _facetAddress != address(this)`
+
+```solidity
+    function removeFunctions(address _facetAddress, bytes4[] memory _functionSelectors) internal
+```
+
+
 
 ### DiamondCutFacet
 
@@ -130,9 +159,86 @@ function diamondCut(
 
 市场
 
+1. 设置id和名称 权限owner
+
+   ```solidity
+   function setMetaverseName(uint256 _metaverseId, string memory _name)
+   ```
+
+2. 设置ERC721登记地址，只有登记了的ERC721合约地址才能在市场进行租赁，权限：owner
+
+   - _metaverseId：第一步操作设置的Id
+   - _registry：ERC721合约地址
+   - _status：状态
+
+   ```solidity
+   function setRegistry(uint256 _metaverseId, address _registry, bool _status) external
+   ```
+
+3. 出租
+
+   出租NFT，只有合约拥有者设置的特定的NFT才能进行出租，出租会锁定原token，铸造一个新的token进行出租
+
+   1. _metaverseId：上面设置了的元宇宙ID
+   2. _metaverseRegistry：NFT登记地址，必须与metaverseId对应
+   3. _metaverseAssetId：tokenId
+   4. _minPeriod：最小租用周期
+   5. _maxPeriod：最大租用周期
+   6. _maxFutureTime：有效期？
+   7. _paymentToken：支付租金的token，address(1)为主币种，其他只有通过`landWorks.setTokenPayment(mockERC20Registry.address, 0, true);`设置过的才支持
+   8. _pricePerSecond：每秒价格
+   9. _referrer：推荐人，可有奖励，在ReferralFacet.sol合约中管理
+
+   ```solidity
+   function list(
+           uint256 _metaverseId,
+           address _metaverseRegistry,
+           uint256 _metaverseAssetId,
+           uint256 _minPeriod,
+           uint256 _maxPeriod,
+           uint256 _maxFutureTime,
+           address _paymentToken,
+           uint256 _pricePerSecond,
+           address _referrer
+       ) external returns (uint256)
+   ```
+
+   
+
 ### RentFacetc
 
 出租
+
+### ReferralFacet
+
+推荐人奖励合约
+
+两种推荐者
+
+1. 元宇宙合约推荐者
+
+   ```solidity
+   struct MetaverseRegistryReferrer {
+           // address of the referrer 
+           address referrer; //推荐人地址
+           // percentage from the rent protocol fee, which will be
+           // accrued to the referrer
+           //租金协议费的百分比，这将是归于推荐人
+           uint24 percentage;
+       }
+   ```
+
+2. 推荐者
+
+   ```
+   function setReferrers(
+           address[] memory _referrers,
+           uint24[] memory _mainPercentages,
+           uint24[] memory _secondaryPercentages
+       ) external
+   ```
+
+   
 
 ### FeeFacet
 
@@ -160,3 +266,54 @@ _feePercentage < (FEE_PRECISION = 100_000)
 
 去中心化土地，锁定、铸造等
 
+
+
+## 主要流程
+
+### 租用平台
+
+1. 设置id和名称
+
+   ```solidity
+   function setMetaverseName(uint256 _metaverseId, string memory _name)
+   ```
+
+2. 设置支持租赁的NFT合约地址
+
+   ```solidity
+   function setRegistry(uint256 _metaverseId, address _registry, bool _status) external
+   ```
+
+3. 设置支付token，主币种为address(1)，FeeFacet合约管理
+
+   ```solidity
+   function setTokenPayment(
+           address _token,
+           uint256 _feePercentage,
+           bool _status
+       ) external
+   ```
+
+4. 授权NFT给市场合约，然后再出租，如果需要推荐人_referrer，则需要先通过ReferralFacet合约的`setMetaverseRegistryReferrers`方法设置
+
+   ```solidity
+   function list(
+           uint256 _metaverseId,
+           address _metaverseRegistry,
+           uint256 _metaverseAssetId,
+           uint256 _minPeriod,
+           uint256 _maxPeriod,
+           uint256 _maxFutureTime,
+           address _paymentToken,
+           uint256 _pricePerSecond,
+           address _referrer
+       ) external returns (uint256)
+   ```
+
+   
+
+   
+
+   
+
+   TODO: 费用及奖励计算公式

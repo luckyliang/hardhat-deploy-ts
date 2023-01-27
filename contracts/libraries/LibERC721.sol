@@ -234,6 +234,7 @@ library LibERC721 {
     ) internal {
         mint(to, tokenId);
         require(
+            //如果是合约必须实现ERC721Receiver才能铸造
             checkOnERC721Received(address(0), to, tokenId, _data),
             "ERC721: transfer to non ERC721Receiver implementer"
         );

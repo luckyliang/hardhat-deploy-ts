@@ -70,15 +70,20 @@ library LibList {
             LibFee.supportsTokenPayment(_paymentToken),
             "payment type not supported"
         );
-        if (_referrer != address(0)) {
+
+        //推荐人奖励
+        //mainPercentage：主要推荐人百分比
+        if (_referrer != address(0)) {     
             LibReferral.ReferrerPercentage memory rp = LibReferral
                 .referralStorage()
                 .referrerPercentages[_referrer];
             require(rp.mainPercentage > 0, "_referrer not whitelisted");
         }
 
+        //铸造新的tokenID
         uint256 asset = LibERC721.safeMint(msg.sender);
-        {
+        {   
+            //储存新资产相关信息
             LibMarketplace.MarketplaceStorage storage ms = LibMarketplace
                 .marketplaceStorage();
             ms.assets[asset] = LibMarketplace.Asset({
@@ -90,11 +95,14 @@ library LibList {
                 maxPeriod: _maxPeriod,
                 maxFutureTime: _maxFutureTime,
                 pricePerSecond: _pricePerSecond,
-                status: LibMarketplace.AssetStatus.Listed,
-                totalRents: 0
+                status: LibMarketplace.AssetStatus.Listed, //上市状态
+                totalRents: 0 //总租金
             });
+
+            //储存推荐人
             LibReferral.referralStorage().listReferrer[asset] = _referrer;
 
+            //锁定NFT
             LibTransfer.erc721SafeTransferFrom(
                 _metaverseRegistry,
                 msg.sender,

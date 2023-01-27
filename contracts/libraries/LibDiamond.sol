@@ -115,9 +115,9 @@ library LibDiamond {
 
         for (uint256 selectorIndex; selectorIndex < _functionSelectors.length; selectorIndex++) {
 
-            //校验是否有相同的selector
             bytes4 selector = _functionSelectors[selectorIndex];
             address oldFacetAddress = ds.selectorToFacetAndPosition[selector].facetAddress;
+            //校验是selector是否是同一个合约地址的，必须不是同合约的相同方法才能替换
             require(oldFacetAddress != _facetAddress, "LibDiamondCut: Can't replace function with same function");
             
             removeFunction(ds, oldFacetAddress, selector);
