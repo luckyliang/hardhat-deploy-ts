@@ -11,7 +11,7 @@ import fs from "fs";
 
 import "./tasks/commonTask"
 
-dotenv.config({path:"./env"})
+dotenv.config({ path: "./env" })
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -22,7 +22,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   }
 });
 
-task("networks", "Prints the list of networks",async () => {
+task("networks", "Prints the list of networks", async () => {
   const networks = config.networks;
   console.log(networks);
 })
@@ -51,17 +51,38 @@ const config: HardhatUserConfig = {
           },
         },
       },
+      {
+        version: "0.4.24" // LAND Mock
+      },
+      {
+        version: "0.4.23" // LAND Mock
+      },
+      {
+        version: "0.4.22" // LAND Mock
+      },
+      {
+        version: "0.4.18" // LAND Mock
+      }
     ],
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 9999,
+    },
+    }
   },
-  defaultNetwork: "localhost",
+  defaultNetwork: "hardhat",
   networks: {
-    localhost:{
+    hardhat: {
+      allowUnlimitedContractSize: true
+    },
+    localhost: {
       url: "http://127.0.0.1:8545/",
       chainId: 31337
     },
-    bsctest:{
+    bsctest: {
       url: "https://data-seed-prebsc-1-s3.binance.org:8545/",
-      
+
       chainId: 97,
       accounts: accounts()
 
@@ -86,7 +107,7 @@ const config: HardhatUserConfig = {
   },
   abiExporter: {
     path: './build/generate/json',
-    only:["TestERC20"],
+    only: ["TestERC20"],
     except: ['.*Mock$'],
     clear: true,
     flat: true,
