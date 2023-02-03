@@ -19,11 +19,11 @@ library LibMarketplace {
         address metaverseRegistry;      //Token合约地址
         uint256 metaverseAssetId;       //tokenId
         address paymentToken;           //支付token合约地址
-        uint256 minPeriod;              //最小租用周期
-        uint256 maxPeriod;              //最大租用周期
-        uint256 maxFutureTime;          //最大有效期
+        uint256 minPeriod;              //最小租用周期 每次租赁的最小时间
+        uint256 maxPeriod;              //最大租用周期 每次租赁的最长时间
+        uint256 maxFutureTime;          //最大未来时间 block.timestamp + asset.maxFutureTime >= rentEnd,
         uint256 pricePerSecond;         //每秒租用价格
-        uint256 totalRents;             //总租金
+        uint256 totalRents;             //总租赁次数，可根据次数索引获取租赁相关信息，比如开始和结束时间
         AssetStatus status;             //资产状态
     }
 
@@ -46,6 +46,7 @@ library LibMarketplace {
         // Assets by ID 资产ID （tokenIds）
         mapping(uint256 => Asset) assets;
         // Rents by asset ID
+        //assetID => asset.totalRents => Rent
         mapping(uint256 => mapping(uint256 => Rent)) rents;
     }
 
@@ -130,6 +131,12 @@ library LibMarketplace {
                 .at(_index);
     }
 
+    /// @dev addRent 添加租赁
+    /// @param _assetId 租赁资产id
+    /// @param _assetId 租用者
+    /// @param _start 租赁开始时间
+    /// @param _start 租赁结束时间
+    /// @return 租赁id
     function addRent(
         uint256 _assetId,
         address _renter,
@@ -137,7 +144,7 @@ library LibMarketplace {
         uint256 _end
     ) internal returns (uint256) {
         LibMarketplace.MarketplaceStorage storage ms = marketplaceStorage();
-        uint256 newRentId = ms.assets[_assetId].totalRents + 1;
+        uint256 newRentId = ms.assets[_assetId].totalRents + 1; //租赁次数+1
 
         ms.assets[_assetId].totalRents = newRentId;
         ms.rents[_assetId][newRentId] = LibMarketplace.Rent({

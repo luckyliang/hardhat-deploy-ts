@@ -17,6 +17,7 @@ import "../libraries/marketplace/LibMarketplace.sol";
 import "../libraries/marketplace/LibMetaverseConsumableAdapter.sol";
 import "../shared/RentPayout.sol";
 
+/// RentPayout：计算租金并支付费用合约
 contract MarketplaceFacet is IMarketplaceFacet, ERC721Holder, RentPayout {
     /// @notice Provides asset of the given metaverse registry for rental.
     /// Transfers and locks the provided metaverse asset to the contract.
@@ -77,6 +78,7 @@ contract MarketplaceFacet is IMarketplaceFacet, ERC721Holder, RentPayout {
     /// @param _paymentToken The token which will be accepted as a form of payment.
     /// Provide 0x0000000000000000000000000000000000000001 for ETH
     /// @param _pricePerSecond The price for rental per second
+    ///更新上市条件， 更新时回取回产生的租金
     function updateConditions(
         uint256 _assetId,
         uint256 _minPeriod,
@@ -140,12 +142,14 @@ contract MarketplaceFacet is IMarketplaceFacet, ERC721Holder, RentPayout {
 
         emit Delist(_assetId, msg.sender);
 
+        //判断最后一个租赁结束时间是否小于当前时间，只有在没有人租用的情况下才可以提现并销魂assetId
         if (block.timestamp >= ms.rents[_assetId][asset.totalRents].end) {
             withdraw(_assetId);
         }
     }
 
-    /// @notice Withdraws the already delisted from marketplace asset.
+    /// @notice Withdraws the already delisted from marketplace asset. 
+    /// 只能在退市的情况下才能提现，并销毁assetId
     /// Burns the asset and transfers the original metaverse asset represented by the asset to the asset owner.
     /// Pays out any unclaimed rent to consumer if set, otherwise it is paid to the owner of the LandWorks NFT
     /// @param _assetId The target _assetId
@@ -165,14 +169,14 @@ contract MarketplaceFacet is IMarketplaceFacet, ERC721Holder, RentPayout {
             block.timestamp >= ms.rents[_assetId][asset.totalRents].end,
             "_assetId has an active rent"
         );
-        clearConsumer(asset);
+        clearConsumer(asset); //清除消费者？
 
         delete LibMarketplace.marketplaceStorage().assets[_assetId];
         delete LibReferral.referralStorage().listReferrer[_assetId];
         address owner = LibERC721.ownerOf(_assetId);
         LibERC721.burn(_assetId);
 
-        LibTransfer.erc721SafeTransferFrom(
+        LibTransfer.erc721SafeTransferFrom( //转回ERC721
             asset.metaverseRegistry,
             address(this),
             owner,
@@ -263,6 +267,7 @@ contract MarketplaceFacet is IMarketplaceFacet, ERC721Holder, RentPayout {
         return LibMarketplace.assetAt(_assetId);
     }
 
+    //清除consumer
     function clearConsumer(LibMarketplace.Asset memory asset) internal {
         address adapter = LibMetaverseConsumableAdapter
             .metaverseConsumableAdapterStorage()

@@ -10,23 +10,29 @@ import "../libraries/LibFee.sol";
 import "../libraries/marketplace/LibRent.sol";
 
 contract RentFacet is IRentFacet {
-    /// @notice Rents an asset for a given period.
+    /// @notice Rents an asset for a given period. 在给定期间租用资产
+
     /// Charges user for the rent upfront. Rent starts from the last rented timestamp
     /// or from the current timestamp of the transaction.
-    /// Protocol fee may be split into multiple referrals.
+    /// 预先向用户收取租金。 租金从上次租用的时间戳开始，或者从交易的当前时间戳开始。
+
+    /// Protocol fee may be split into multiple referrals. 协议费用分割到多个推荐者
+
+    /// 在 metaverse，可能会发现初始租金的折扣
     /// Discount from the initial rent amount may be found depending on the metaverse
+
     /// registry and rent referrers.
     /// See {IReferralFacet-setMetaverseRegistryReferrers}, {IReferralFacet-setReferrers}.
     /// @dev Call {IRentFacet-calculateRentFee} to get the correct amount and payment token
     /// required for the given period and referrer.
     /// @param _assetId The target asset
-    /// @param _period The target rental period (in seconds)
-    /// @param _maxRentStart The maximum rent start allowed for the given rent
-    /// @param _paymentToken The current payment token for the asset
-    /// @param _amount The target amount to be paid for the rent
-    /// @param _referrer The target referrer
-    /// @return rentId_ The id of the rent for the target asset
-    /// @return rentStartsNow_ Whether the rents begins in the current block
+    /// @param _period The target rental period (in seconds) 租用周期秒
+    /// @param _maxRentStart The maximum rent start allowed for the given rent 允许最大的租赁开始时间（因为可能会排队）
+    /// @param _paymentToken The current payment token for the asset 支付token
+    /// @param _amount The target amount to be paid for the rent 支付的租金
+    /// @param _referrer The target referrer    推荐者
+    /// @return rentId_ The id of the rent for the target asset 租用id
+    /// @return rentStartsNow_ Whether the rents begins in the current block 是否从当前时间开始租用
     function rent(
         uint256 _assetId,
         uint256 _period,

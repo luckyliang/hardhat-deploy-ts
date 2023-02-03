@@ -12,6 +12,7 @@ import "../libraries/marketplace/LibRent.sol";
 /// @notice A Metaverse related facet, that manages the logic
 /// with metaverses having an external consumable adapter, used
 /// to store consumers of LandWorks NFTs upon rentals.
+///与 Metaverse 相关的方面，它管理具有外部消费适配器的 Metaverse 的逻辑，用于在租赁时存储 LandWorks NFT 的消费者。
 contract MetaverseConsumableAdapterFacet is IMetaverseConsumableAdapterFacet {
     /// @notice Provides asset of the given metaverse registry for rental.
     /// Transfers and locks the provided metaverse asset to the contract.

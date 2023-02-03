@@ -16,6 +16,7 @@ contract FeeFacet is IFeeFacet, RentPayout {
     /// Can be called by any address. If owner EOA or contract has any issue with
     /// ETH processing or token withdrawals, the amount sent can be lost.
     /// @param _token The target token
+    /// 提取协议产生的总费用
     function claimProtocolFee(address _token) public {
         uint256 protocolFee = LibFee.clearAccumulatedProtocolFee(_token);
         if (protocolFee == 0) {
@@ -32,6 +33,7 @@ contract FeeFacet is IFeeFacet, RentPayout {
     /// Can be called by any address. If owner EOA or contract has any issue with
     /// ETH processing or token withdrawals, the amount sent can be lost.
     /// @param _tokens The array of tokens
+    /// 批量提取
     function claimProtocolFees(address[] calldata _tokens) public {
         for (uint256 i = 0; i < _tokens.length; i++) {
             claimProtocolFee(_tokens[i]);
@@ -70,7 +72,7 @@ contract FeeFacet is IFeeFacet, RentPayout {
 
     /// @notice Sets status of token payment (accepted or not) and its fee
     /// @param _token The target token
-    /// @param _feePercentage The fee percentage, charged on every rent
+    /// @param _feePercentage The fee percentage, charged on every rent token 对应的费用百分比
     /// @param _status Whether the token will be added or removed from the
     /// supported token payments list
     function setTokenPayment(

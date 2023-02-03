@@ -493,7 +493,7 @@ describe('LandWorks', function () {
 
                 it('should revert when trying to list a non-existing metaverse token id', async () => {
                     const invalidTokenId = 1234;
-                    const expectedRevertMessage = 'ERC721: operator query for nonexistent token';
+                    const expectedRevertMessage = 'ERC721: invalid token ID';
                     // when:
                     await expect(landWorks
                         .list(
@@ -548,6 +548,286 @@ describe('LandWorks', function () {
                         ))
                         .to.be.revertedWith(expectedRevertMessage);
                 });
+
+                it('withdrawing and listing again should not get the old token id for the latest asset', async () => {
+                    const newlyGeneratedTokenId = 1;
+                    // given:
+                    await mockERC721Registry.approve(landWorks.address, metaverseTokenId);
+                    await landWorks.list(metaverseId, mockERC721Registry.address, metaverseTokenId, minPeriod, maxPeriod, maxFutureTime, ADDRESS_ONE, pricePerSecond, ethers.constants.AddressZero);
+                    await landWorks.delist(assetId); //下架、退市，计算累积租金、销毁市场铸造的NFT，退回原NFT
+
+                    // when:
+                    await mockERC721Registry.approve(landWorks.address, metaverseTokenId);
+                    await landWorks.list(metaverseId, mockERC721Registry.address, metaverseTokenId, minPeriod, maxPeriod, maxFutureTime, ADDRESS_ONE, pricePerSecond, ethers.constants.AddressZero);
+
+                    // then: old assetId 已不存在
+                    await expect(landWorks.ownerOf(assetId)).to.be.revertedWith('ERC721: owner query for nonexistent token');
+                    // and:
+                    expect(await mockERC721Registry.ownerOf(metaverseTokenId)).to.equal(landWorks.address);
+                    expect(await landWorks.ownerOf(newlyGeneratedTokenId)).to.be.equal(owner.address);
+                    // and:
+                    const asset = await landWorks.assetAt(newlyGeneratedTokenId);
+                    expect(asset.metaverseId).to.equal(metaverseId);
+                    expect(asset.metaverseRegistry).to.equal(mockERC721Registry.address);
+                    expect(asset.metaverseAssetId).to.equal(metaverseTokenId);
+                    expect(asset.paymentToken).to.equal(ADDRESS_ONE);
+                    expect(asset.minPeriod).to.equal(minPeriod);
+                    expect(asset.maxPeriod).to.equal(maxPeriod);
+                    expect(asset.maxFutureTime).to.equal(maxFutureTime);
+                    expect(asset.pricePerSecond).equal(pricePerSecond);
+                    expect(asset.status).to.equal(0); // Listed
+                    expect(asset.totalRents).to.equal(0);
+                    expect(await landWorks.totalSupply()).to.equal(1);
+                    expect(await landWorks.tokenOfOwnerByIndex(owner.address, 0)).to.equal(newlyGeneratedTokenId);
+                    expect(await landWorks.tokenByIndex(0)).to.equal(newlyGeneratedTokenId);
+                });
+
+            })
+
+            describe('updateConditions', async () => {
+
+                beforeEach(async () => {
+                    // given:
+                    await mockERC721Registry.approve(landWorks.address, metaverseTokenId);
+                    // and:
+                    await landWorks.list(
+                        metaverseId,
+                        mockERC721Registry.address,
+                        metaverseTokenId,
+                        minPeriod,
+                        maxPeriod,
+                        maxFutureTime,
+                        ADDRESS_ONE,
+                        pricePerSecond,
+                        ethers.constants.AddressZero
+                    );
+                    // and:
+                    await landWorks.setTokenPayment(mockERC20Registry.address, 0, true);
+                });
+
+                it('should successfully update conditions', async () => {
+                    // when:
+                    await landWorks
+                        .updateConditions(
+                            assetId,
+                            minPeriod + 1,
+                            maxPeriod + 1,
+                            maxFutureTime + 1,
+                            mockERC20Registry.address,
+                            pricePerSecond + 1);
+
+                    // then:
+                    expect(await landWorks.ownerOf(assetId)).to.equal(owner.address);
+                    // and:
+                    const asset = await landWorks.assetAt(assetId);
+                    expect(asset.metaverseId).to.equal(metaverseId);
+                    expect(asset.metaverseRegistry).to.equal(mockERC721Registry.address);
+                    expect(asset.metaverseAssetId).to.equal(metaverseTokenId);
+                    expect(asset.paymentToken).to.equal(mockERC20Registry.address);
+                    expect(asset.minPeriod).to.equal(minPeriod + 1);
+                    expect(asset.maxPeriod).to.equal(maxPeriod + 1);
+                    expect(asset.maxFutureTime).to.equal(maxFutureTime + 1);
+                    expect(asset.pricePerSecond).equal(pricePerSecond + 1);
+                    expect(asset.status).to.equal(0); // Listed
+                    expect(asset.totalRents).to.equal(0);
+                });
+
+                it('should also claim rent fee on update', async () => {
+                    // given:
+                    await landWorks.connect(nonOwner).rent(assetId, 1, MAX_RENT_START, ADDRESS_ONE, pricePerSecond, ethers.constants.AddressZero, { value: pricePerSecond });
+                    const beforeBalance = await owner.getBalance();
+
+                    // when:
+                    const tx = await landWorks
+                        .updateConditions(
+                            assetId,
+                            minPeriod + 1,
+                            maxPeriod + 1,
+                            maxFutureTime + 1,
+                            mockERC20Registry.address,
+                            pricePerSecond + 1);
+                    const receipt = await tx.wait();
+
+                    // then:
+                    await expect(tx)
+                        .to.emit(landWorks, 'UpdateConditions')
+                        .withArgs(
+                            assetId,
+                            minPeriod + 1,
+                            maxPeriod + 1,
+                            maxFutureTime + 1,
+                            mockERC20Registry.address,
+                            pricePerSecond + 1)
+                        .to.emit(landWorks, 'ClaimRentFee')
+                        .withArgs(assetId, ADDRESS_ONE, owner.address, pricePerSecond);
+
+                    // and:
+                    const txFee = receipt.effectiveGasPrice.mul(receipt.gasUsed);
+                    const afterBalance = await owner.getBalance();
+                    expect(afterBalance).to.equal(beforeBalance.sub(txFee).add(pricePerSecond));
+                });
+
+
+            })
+
+            describe('', async () => {
+                beforeEach(async () => {
+                    // given:
+                    await mockERC721Registry.approve(landWorks.address, metaverseTokenId);
+                    // and:
+                    await landWorks.list(
+                        metaverseId,
+                        mockERC721Registry.address,
+                        metaverseTokenId,
+                        minPeriod,
+                        maxPeriod,
+                        maxFutureTime,
+                        ADDRESS_ONE,
+                        pricePerSecond,
+                        ethers.constants.AddressZero
+                    );
+                });
+
+                describe('delist',async () => { 
+                    //退市
+                    // 如果没有正在出租状态，则会销毁，并提现租金
+                    // 如果有正在出租的状态，则只会讲assetId改为Delisted状态，不会销毁，也不会提现租金，只有当没有在出租状态的时候再调用withdraw方法提现并销毁
+
+                    it('should successfully delist', async () => {
+                        // when:
+                        await landWorks.delist(assetId);
+
+                        // then:
+                        expect(await mockERC721Registry.ownerOf(metaverseTokenId)).to.equal(owner.address);
+                        await expect(landWorks.ownerOf(assetId))
+                            .to.be.revertedWith('ERC721: owner query for nonexistent token');
+                        // and:
+                        const asset = await landWorks.assetAt(assetId);
+                        expect(asset.metaverseId).to.equal(0);
+                        expect(asset.metaverseRegistry).to.equal(ethers.constants.AddressZero);
+                        expect(asset.metaverseAssetId).to.equal(0);
+                        expect(asset.paymentToken).to.equal(ethers.constants.AddressZero);
+                        expect(asset.minPeriod).to.equal(0);
+                        expect(asset.maxPeriod).to.equal(0);
+                        expect(asset.maxFutureTime).to.equal(0);
+                        expect(asset.pricePerSecond).equal(0);
+                        expect(asset.status).to.equal(0);
+                        expect(asset.totalRents).to.equal(0);
+                        expect(await landWorks.totalSupply()).to.equal(0);
+                        await expect(landWorks.tokenOfOwnerByIndex(owner.address, assetId)).to.be.revertedWith('ERC721Enumerable: owner index out of bounds');
+                        await expect(landWorks.tokenByIndex(0)).to.be.revertedWith('ERC721Enumerable: global index out of bounds');
+                    });
+
+                    it('should not claim, transfer, burn and clear storage when an active rent exists', async () => {
+                        // given:
+                        const amount = pricePerSecond * maxPeriod;
+                        await landWorks.connect(nonOwner).rent(assetId, maxPeriod, MAX_RENT_START, ADDRESS_ONE, amount, ethers.constants.AddressZero, { value: amount });
+
+                        // when:
+                        await expect(landWorks
+                            .delist(assetId))
+                            .to.emit(landWorks, 'Delist')
+                            .withArgs(assetId, owner.address)
+                            .to.not.emit(landWorks, 'ConsumerChanged')
+                            .to.not.emit(landWorks, 'Transfer')
+                            .to.not.emit(landWorks, 'ClaimRentFee')
+                            .to.not.emit(landWorks, 'Withdraw');
+
+                        // then:
+                        expect(await mockERC721Registry.ownerOf(metaverseTokenId)).to.equal(landWorks.address);
+                        expect(await landWorks.ownerOf(assetId)).to.equal(owner.address);
+                        // and:
+                        const asset = await landWorks.assetAt(assetId);
+                        expect(asset.metaverseId).to.equal(metaverseId);
+                        expect(asset.metaverseRegistry).to.equal(mockERC721Registry.address);
+                        expect(asset.metaverseAssetId).to.equal(metaverseTokenId);
+                        expect(asset.paymentToken).to.equal(ADDRESS_ONE);
+                        expect(asset.minPeriod).to.equal(minPeriod);
+                        expect(asset.maxPeriod).to.equal(maxPeriod);
+                        expect(asset.maxFutureTime).to.equal(maxFutureTime);
+                        expect(asset.pricePerSecond).equal(pricePerSecond);
+                        expect(asset.status).to.equal(1); // Delisted
+                        expect(asset.totalRents).to.equal(1);
+                    });
+
+                    it('should claim successfully', async () => {
+                        // given:
+                        const amount = pricePerSecond * minPeriod;
+                        await landWorks.connect(nonOwner).rent(assetId, minPeriod, MAX_RENT_START, ADDRESS_ONE, amount, ethers.constants.AddressZero, { value: amount });
+                        const beforeBalance = await owner.getBalance();
+
+                        // when:
+                        const tx = await landWorks.delist(assetId);
+                        const receipt = await tx.wait();
+
+                        // then:
+                        await expect(tx)
+                            .to.emit(landWorks, 'ConsumerChanged')
+                            .withArgs(owner.address, ethers.constants.AddressZero, assetId)
+                            .to.emit(landWorks, 'Delist')
+                            .withArgs(assetId, owner.address)
+                            .to.emit(landWorks, 'Transfer')
+                            .withArgs(owner.address, ethers.constants.AddressZero, assetId)
+                            .to.emit(landWorks, 'ClaimRentFee')
+                            .withArgs(assetId, ADDRESS_ONE, owner.address, pricePerSecond * minPeriod)
+                            .to.emit(mockERC721Registry, 'Transfer')
+                            .withArgs(landWorks.address, owner.address, metaverseTokenId)
+                            .to.emit(landWorks, 'Withdraw')
+                            .withArgs(assetId, owner.address);
+
+                        // and:
+                        const txFee = receipt.effectiveGasPrice.mul(receipt.gasUsed);
+                        const afterBalance = await owner.getBalance();
+                        expect(afterBalance).to.equal(beforeBalance.sub(txFee).add(pricePerSecond));
+                    });
+                })
+
+                describe('withdraw', async () => {
+                    const period = 2;
+                    const amount = pricePerSecond * period;
+                    beforeEach(async () => {
+                        // given:
+                        await landWorks.connect(nonOwner).rent(assetId, period, MAX_RENT_START, ADDRESS_ONE, amount, ethers.constants.AddressZero, { value: amount });
+                    });
+
+                    it('should withdraw successfully', async () => {
+                        // given:
+                        await landWorks.delist(assetId);
+
+                        // when:
+                        await landWorks.withdraw(assetId);
+
+                        // then:
+                        expect(await mockERC721Registry.ownerOf(metaverseTokenId)).to.equal(owner.address);
+                        await expect(landWorks.ownerOf(assetId))
+                            .to.be.revertedWith('ERC721: owner query for nonexistent token');
+                        // and:
+                        const asset = await landWorks.assetAt(assetId);
+                        expect(asset.metaverseId).to.equal(0);
+                        expect(asset.metaverseRegistry).to.equal(ethers.constants.AddressZero);
+                        expect(asset.metaverseAssetId).to.equal(0);
+                        expect(asset.paymentToken).to.equal(ethers.constants.AddressZero);
+                        expect(asset.minPeriod).to.equal(0);
+                        expect(asset.maxPeriod).to.equal(0);
+                        expect(asset.maxFutureTime).to.equal(0);
+                        expect(asset.pricePerSecond).equal(0);
+                        expect(asset.status).to.equal(0);
+                        expect(asset.totalRents).to.equal(0);
+                        expect(await landWorks.totalSupply()).to.equal(0);
+                        await expect(landWorks.tokenOfOwnerByIndex(owner.address, assetId)).to.be.revertedWith('ERC721Enumerable: owner index out of bounds');
+                        await expect(landWorks.tokenByIndex(0)).to.be.revertedWith('ERC721Enumerable: global index out of bounds');
+                    });
+
+                    it('should revert when adapter does not implement setConsumer', async () => {
+                        // given:
+                        await landWorks.connect(nonOwner).rentWithConsumer(assetId, 1, MAX_RENT_START, owner.address, ADDRESS_ONE, pricePerSecond, ethers.constants.AddressZero, { value: pricePerSecond });
+                        await landWorks.setConsumableAdapter(mockERC721Registry.address, mockERC721Registry.address);
+    
+                        // when:
+                        await expect(landWorks.withdraw(assetId))
+                            .to.be.reverted;
+                    });
+                })
 
             })
 

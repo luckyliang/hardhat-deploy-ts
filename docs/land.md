@@ -157,7 +157,7 @@ function addFunctions(address _facetAddress, bytes4[] memory _functionSelectors)
 
 ### MarketplaceFacet
 
-市场
+租赁市场合约，继承：ERC721Holder, RentPayout
 
 1. 设置id和名称 权限owner
 
@@ -187,7 +187,7 @@ function addFunctions(address _facetAddress, bytes4[] memory _functionSelectors)
    6. _maxFutureTime：有效期？
    7. _paymentToken：支付租金的token，address(1)为主币种，其他只有通过`landWorks.setTokenPayment(mockERC20Registry.address, 0, true);`设置过的才支持
    8. _pricePerSecond：每秒价格
-   9. _referrer：推荐人，可有奖励，在ReferralFacet.sol合约中管理
+   9. _referrer：推荐人，可有奖励，在`ReferralFacet.sol`合约中管理， 在该方法中会判断mainPercentages 是否 > 0 , 需要预先设置推荐者。
 
    ```solidity
    function list(
@@ -203,11 +203,30 @@ function addFunctions(address _facetAddress, bytes4[] memory _functionSelectors)
        ) external returns (uint256)
    ```
 
-   
+4. 移除出租的资产
 
-### RentFacetc
+   - _assetId：市场新铸造的tokenId
 
-出租
+   ```solidity
+   function delist(uint256 _assetId) external
+   ```
+
+### RentFacet
+
+租用合约
+
+```solidity
+function rent(
+        uint256 _assetId,
+        uint256 _period,
+        uint256 _maxRentStart,
+        address _paymentToken,
+        uint256 _amount,
+        address _referrer
+    ) external payable returns (uint256 rentId_, bool rentStartsNow_)
+```
+
+
 
 ### ReferralFacet
 
@@ -228,13 +247,25 @@ function addFunctions(address _facetAddress, bytes4[] memory _functionSelectors)
        }
    ```
 
+   设置方法
+
+   ```solidity
+   function setMetaverseRegistryReferrers(					//设置元宇宙NFT合约推荐者
+           address[] memory _metaverseRegistries,  //目标NFT合约地址
+           address[] memory _referrers,            //推荐人
+           uint24[] memory _percentages            //百分比，_percentage <= 100_000
+       ) external
+   ```
+
+   
+
 2. 推荐者
 
-   ```
+   ```solidity
    function setReferrers(
            address[] memory _referrers,
-           uint24[] memory _mainPercentages,
-           uint24[] memory _secondaryPercentages
+           uint24[] memory _mainPercentages, //<= 50_000
+           uint24[] memory _secondaryPercentages // <= 100_000
        ) external
    ```
 
@@ -312,8 +343,51 @@ _feePercentage < (FEE_PRECISION = 100_000)
 
    
 
-   
+   ### Consumer
+
+   消费者，可以帮助NFT所有者管理上市后的assetId（如更新出租条件），如果设置了consumer则租金会打给consumer
 
    
+   
+   
+   
+   ## 费用及奖励计算公式
+   
+   FEE_PRECISION = 100_000 分母
+   
+   1. 协议总费用：租金 * 协议费用占的百分比
+   
+      `feePercentage < 100_000`
+   
+      `protocolFee = rentPayment * feePercentage / FEE_PRECISION(100_000)`
+   
+   2. 元宇宙推荐者奖励：协议费用 * 元宇宙推荐者得百分比 
+   
+      metaverseReferralAmount = (protocolFee * percentage) / FEE_PRECISION;
+   
+   3. 上市奖励计算
+   
+      剩余协议费用 = 协议总费用  -  元宇宙推荐者奖励
+   
+      上市总奖励 ： 剩余协议费用 * 上市推荐者的 mainPercentage  / FEE_PRECISION
+   
+      上市者奖励：上市总奖励数 * 上市推荐者的secondaryPercentage / FEE_PRECISION
+   
+      推荐者奖励：上市总奖励 - 上市者奖励
+   
+   4. 租赁奖励
+   
+      剩余协议费用 = 协议总费用  -  元宇宙推荐者奖励
+   
+      租赁总奖励 ： 剩余协议费用 * 租赁推荐者的 mainPercentage / FEE_PRECISION
+   
+      租赁者奖励：租赁总奖励 * 租赁推荐者的secondaryPercentage / FEE_PRECISION
+   
+      租赁推荐者奖励：租赁总奖励 - 租赁者奖励
+   
+   5. 租赁者应该支付费用
+   
+      总的应付租金 = 租用时间（秒）* 每秒价格
+   
+      实际支付租金 = 总的应付租金 - 租赁者奖励
 
-   TODO: 费用及奖励计算公式

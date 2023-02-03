@@ -16,11 +16,14 @@ library LibFee {
     struct FeeStorage {
         // Supported tokens as a form of payment
         EnumerableSet.AddressSet tokenPayments;
-        // Protocol fee percentages for tokens
+        // Protocol fee percentages for tokens 
+        //erc20 token => feePercentages, token代币对应的协议费用百分比 = feePercentages / FEE_PRECISION
         mapping(address => uint256) feePercentages;
-        // Assets' rent fees
+        // Assets' rent fees，记录assetId的累积erc20Token资产
+        // assetId => ERC20Token => amount
         mapping(uint256 => mapping(address => uint256)) assetRentFees;
-        // Protocol fees for tokens
+
+        // Protocol fees for tokens erc20 token => 协议总费用
         mapping(address => uint256) protocolFees;
     }
 
@@ -32,6 +35,7 @@ library LibFee {
         }
     }
 
+    //清除assetId对应的累积token类资产
     function clearAccumulatedRent(uint256 _assetId, address _token)
         internal
         returns (uint256)
@@ -44,6 +48,7 @@ library LibFee {
         return amount;
     }
 
+    //清除协议费用
     function clearAccumulatedProtocolFee(address _token)
         internal
         returns (uint256)
@@ -56,6 +61,7 @@ library LibFee {
         return amount;
     }
 
+    //设置协议费用百分比
     function setFeePercentage(address _token, uint256 _feePercentage) internal {
         LibFee.FeeStorage storage fs = feeStorage();
         require(
@@ -67,6 +73,7 @@ library LibFee {
         emit SetFee(_token, _feePercentage);
     }
 
+    //设置支持支付的erc20 Token
     function setTokenPayment(address _token, bool _status) internal {
         FeeStorage storage fs = feeStorage();
         if (_status) {

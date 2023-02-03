@@ -106,11 +106,11 @@ contract ReferralFacet is IReferralFacet {
         for (uint256 i = 0; i < _referrers.length; i++) {
             require(_referrers[i] != address(0), "_referrer cannot be 0x0");
             require(
-                _mainPercentages[i] <= (LibFee.FEE_PRECISION / 2),
+                _mainPercentages[i] <= (LibFee.FEE_PRECISION / 2), //<= 50_000
                 "_percentage cannot exceed 50"
             );
             require(
-                _secondaryPercentages[i] <= LibFee.FEE_PRECISION,
+                _secondaryPercentages[i] <= LibFee.FEE_PRECISION, // <= 100_000
                 "_secondaryPercentage cannot exceed 100"
             );
 
