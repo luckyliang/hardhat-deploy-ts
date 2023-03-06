@@ -13,7 +13,28 @@ LandWorks 是一个基于以太坊的虚拟土地租赁市场， 它可以在 We
 
 [EIP-2535: Diamonds, Multi-Facet Proxy](https://eips.ethereum.org/EIPS/eip-2535)：钻石协议
 
-### ILandWorks协议
+## LandWorks主要合约
+
+[LandWorks](../contracts/LandWorks.sol)：钻石合约，所有合约的入口
+
+基础切面：
+
+- [DiamondCutFacet](../contracts/facets/DiamondCutFacet.sol)：切面管理合约，负责添加、替换、移除切面
+- [DiamondLoupeFacet](../contracts/facets/DiamondLoupeFacet.sol)：观察合约，用于观察LandWorks中拥有哪些切面、获取切面所有方法、根据方法签名获取切面地址
+
+功能性切面：
+
+- [ERC721Facet](../contracts/facets/FeeFacet.sol)：ERC72扩展合约，支持ERC4400协议，可设置消费者角色，比如：landworks中质押的同时设置Consumer角色来帮助其
+- [FeeFacet](../contracts/facets/FeeFacet.sol)：费用切面，提取协议费用、提取租金费用、针对token设置收取的费用、添加支付token类型。
+- [MarketplaceFacet]("../contracts/facets/MarketplaceFacet.sol")：出租合约，上架NFT、更新条件、下架NFT、设置元宇宙名、设置NFTRegistry
+- MetaverseAdditionFacet：
+- MetaverseConsumableAdapterFacet：管理NFT合约的ConsumableAdapter
+- OwnershipFacet：合约拥有者管理
+- ReferralFacet：推荐者切面，设置推荐者管理员负责增加和删除推荐者、设置推荐者及奖励费用、提取推荐者费用
+- RentFacet：租用合约，租用NFT，计算租金
+- [DecentralandFacet](../contracts/facets/DecentralandFacet.sol)：去中心化土地切面，支持土地出租的扩展合约，结合三方去中心化land合约使用
+
+## LandWorks源码分析
 
 ```solidity
 interface ILandWorks is

@@ -66,7 +66,7 @@ contract DecentralandFacet is IDecentralandFacet {
     /// @param _assetId The target asset
     /// @param _period The target period of the rental
     /// @param _maxRentStart The maximum rent start allowed for the given rent
-    /// @param _operator The target operator, which will be set as operator once the rent is active
+    /// @param _operator The target operator, which will be set as operator once the rent is active 操作者
     /// @param _paymentToken The current payment token for the asset
     /// @param _amount The target amount to be paid for the rent
     /// @param _referrer The target referrer
@@ -93,10 +93,14 @@ contract DecentralandFacet is IDecentralandFacet {
                 _referrer: _referrer
             })
         );
+
+        //设置新建tokenId操作者
         LibDecentraland.setOperator(_assetId, rentId_, _operator);
+
         emit UpdateOperator(_assetId, rentId_, _operator);
 
         if (rentStartsNow_) {
+            //更新状态
             updateState(_assetId, rentId_);
         }
     }
@@ -183,6 +187,8 @@ contract DecentralandFacet is IDecentralandFacet {
         LibMarketplace.Asset memory asset = LibMarketplace
             .marketplaceStorage()
             .assets[_assetId];
+
+        //更新原NFT操作者
         IDecentralandRegistry(asset.metaverseRegistry).setUpdateOperator(
             asset.metaverseAssetId,
             _operator
@@ -191,7 +197,7 @@ contract DecentralandFacet is IDecentralandFacet {
         emit UpdateState(_assetId, _rentId, _operator);
     }
 
-    /// @notice Updates the administrative operator
+    /// @notice Updates the administrative operator 更新admin operator 权限：合约拥有者
     /// @param _administrativeOperator The to-be-set administrative operator
     function updateAdministrativeOperator(address _administrativeOperator)
         external
@@ -207,6 +213,7 @@ contract DecentralandFacet is IDecentralandFacet {
         emit UpdateAdministrativeOperator(_administrativeOperator);
     }
 
+    // 更新assetId的操作者
     function updateAdministrativeOperator(
         uint256 _assetId,
         address _metaverseRegistry,
@@ -214,7 +221,9 @@ contract DecentralandFacet is IDecentralandFacet {
     ) internal {
         address operator = LibDecentraland
             .decentralandStorage()
-            .administrativeOperator;
+            .administrativeOperator; //获取admin 操作者
+
+        //更新去中心化土地操作者为 admin
         IDecentralandRegistry(_metaverseRegistry).setUpdateOperator(
             _metaverseAssetId,
             operator

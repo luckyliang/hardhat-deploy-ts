@@ -83,8 +83,11 @@ library LibMarketplace {
         address _registry,
         bool _status
     ) internal {
+        
+        //获取登记表
         LibMarketplace.MetaverseRegistry storage mr = marketplaceStorage()
             .metaverseRegistries[_metaverseId];
+
         if (_status) {
             require(mr.registries.add(_registry), "_registry already added");
         } else {

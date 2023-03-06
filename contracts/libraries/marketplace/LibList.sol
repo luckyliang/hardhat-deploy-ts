@@ -55,7 +55,7 @@ library LibList {
             _metaverseRegistry != address(0),
             "_metaverseRegistry must not be 0x0"
         );
-        require(
+        require(//判断是否支持，需要管理员提前设置
             LibMarketplace.supportsRegistry(_metaverseId, _metaverseRegistry),
             "_registry not supported"
         );
@@ -67,6 +67,7 @@ library LibList {
             "_maxPeriod more than _maxFutureTime"
         );
         require(
+            //判断是否支持 支付的token
             LibFee.supportsTokenPayment(_paymentToken),
             "payment type not supported"
         );
@@ -96,7 +97,7 @@ library LibList {
                 maxFutureTime: _maxFutureTime,
                 pricePerSecond: _pricePerSecond,
                 status: LibMarketplace.AssetStatus.Listed, //上市状态
-                totalRents: 0 //总租金
+                totalRents: 0 //总租赁次数
             });
 
             //储存推荐人

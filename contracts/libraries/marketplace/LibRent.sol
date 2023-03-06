@@ -98,6 +98,8 @@ library LibRent {
             asset.status == LibMarketplace.AssetStatus.Listed, //必须上市状态
             "_assetId not listed"
         );
+
+        //必须大于出租者设置的最小周期
         require( 
             rentParams._period >= asset.minPeriod, 
             "_period less than minPeriod"
@@ -105,7 +107,8 @@ library LibRent {
         require(
             rentParams._period <= asset.maxPeriod,
             "_period more than maxPeriod"
-        );
+        );                                                                                                                                       
+
         require(
             rentParams._paymentToken == asset.paymentToken,
             "invalid _paymentToken"
@@ -120,19 +123,22 @@ library LibRent {
 
         bool rentStartsNow = true;
         uint256 rentStart = block.timestamp;
-        uint256 lastRentEnd = ms
-        .rents[rentParams._assetId][asset.totalRents].end;
 
-        if (lastRentEnd > rentStart) {
-            rentStart = lastRentEnd;
+        //最后一人的结束时间
+        uint256 lastRentEnd = ms.rents[rentParams._assetId][asset.totalRents].end;
+
+        if (lastRentEnd > rentStart) { //最后一人的结束时间 > 结束时间
+            rentStart = lastRentEnd; //开始时间 = 最后一人的结束时间
             rentStartsNow = false;
         }
+
         require(//校验最大开始租赁时间
             rentStart <= rentParams._maxRentStart,
             "rent start exceeds maxRentStart"
         );
 
-        uint256 rentEnd = rentStart + rentParams._period;
+        uint256 rentEnd = rentStart + rentParams._period; //结束时间
+
         require(//最大未来时间
             block.timestamp + asset.maxFutureTime >= rentEnd,
             "rent more than current maxFutureTime"
